@@ -5,6 +5,9 @@ language:
 rmd_files: [
   "index.Rmd",
   "motivation.Rmd",
-  "methods_results.Rmd"]
+  "data.Rmd",
+  "modeling.Rmd",
+  "finalmodel.Rmd",
+  "reflection.Rmd"]
 delete_merged_file: true 
 output_dir: "docs"

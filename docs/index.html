@@ -24,7 +24,6 @@
 <meta name="author" content="Nicholas Di, Nolan Meyer, Duc Ngo" />
 
 
-<meta name="date" content="2021-12-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -75,19 +74,22 @@
 <li><a href="./">STAT 454 Capstone</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome</a>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome</a></li>
+<li class="chapter" data-level="2" data-path="motivation.html"><a href="motivation.html"><i class="fa fa-check"></i><b>2</b> Motivation</a></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#learn-all-about-bookdown"><i class="fa fa-check"></i><b>1.1</b> Learn all about Bookdown</a></li>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#data-source"><i class="fa fa-check"></i><b>3.1</b> Data Source</a></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#variables"><i class="fa fa-check"></i><b>3.2</b> Variables</a></li>
+<li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>3.3</b> Initial Explorations</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="motivation.html"><a href="motivation.html"><i class="fa fa-check"></i><b>2</b> Motivation</a>
+<li class="chapter" data-level="4" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>4</b> Modeling</a></li>
+<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a></li>
+<li class="chapter" data-level="6" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>6</b> Reflection</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="motivation.html"><a href="motivation.html#get-bookdown-tutorial-going-on-your-local-computer"><i class="fa fa-check"></i><b>2.1</b> Get “bookdown-tutorial” going on your local computer</a></li>
-<li class="chapter" data-level="2.2" data-path="motivation.html"><a href="motivation.html#create-your-awesome-book-github-repo"><i class="fa fa-check"></i><b>2.2</b> Create your “awesome-book” GitHub repo</a></li>
-<li class="chapter" data-level="2.3" data-path="motivation.html"><a href="motivation.html#turn-bookdown-tutorial-into-awesome-book"><i class="fa fa-check"></i><b>2.3</b> Turn “bookdown-tutorial” into “awesome-book”</a></li>
-<li class="chapter" data-level="2.4" data-path="motivation.html"><a href="motivation.html#publish-awesome-book"><i class="fa fa-check"></i><b>2.4</b> Publish “awesome-book”</a></li>
-<li class="chapter" data-level="2.5" data-path="motivation.html"><a href="motivation.html#moving-forward"><i class="fa fa-check"></i><b>2.5</b> Moving forward</a></li>
+<li class="chapter" data-level="6.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>6.1</b> Next Steps</a></li>
+<li class="chapter" data-level="6.2" data-path="reflection.html"><a href="reflection.html#acknowledgements"><i class="fa fa-check"></i><b>6.2</b> Acknowledgements</a></li>
+<li class="chapter" data-level="6.3" data-path="reflection.html"><a href="reflection.html#citations"><i class="fa fa-check"></i><b>6.3</b> Citations</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="write.html"><a href="write.html"><i class="fa fa-check"></i><b>3</b> Writing in Bookdown</a></li>
 </ul>
 
       </nav>
@@ -108,32 +110,15 @@
 <div id="header">
 <h1 class="title">Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies</h1>
 <p class="author"><em>Nicholas Di, Nolan Meyer, Duc Ngo</em></p>
-<p class="date"><em>2021-12-08</em></p>
+<p class="date"><em>Macalester College, Fall 2021</em></p>
 </div>
 <div id="welcome" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Welcome</h1>
-<p>It’s possible to create beautiful books for free using <a href="http://rmarkdown.rstudio.com/">RStudio’s R Markdown</a> and Yihui Xie’s <a href="https://bookdown.org/yihui/bookdown/">bookdown</a> and hosting them on <a href="http://github.com">Github</a>. This is pretty new and incredibly cool. It is a really powerful way to communicate science using the same reproducible workflow you use for your analyses and collaborations.</p>
-<p>This tutorial borrows heavily from a lot of great tutorials and resources you should check out too – there are links throughout. It also parallels a previous tutorial <a href="https://jules32.github.io/rmarkdown-website-tutorial/">Making free websites with RStudio’s R Markdown</a>.</p>
-<ol style="list-style-type: decimal">
-<li>install <a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a></li>
-<li>create a <a href="(http://github.com)">GitHub</a> account (<a href="http://happygitwithr.com/github-acct.html">advice</a>)</li>
-<li>set up your computer to talk to GitHub
-<ul>
-<li>have RStudio linked directly (highly recommended) (<a href="http://happygitwithr.com/hello-git.html">instructions sections 8-14</a>)</li>
-<li>or install the <a href="https://desktop.github.com/">Desktop App</a></li>
-<li>or be familiar with git commands for the command line (<a href="https://try.github.io/levels/1/challenges/1">tutorial</a>)</li>
-</ul></li>
-</ol>
+<p>Introduction…</p>
 <hr />
-<p><strong>Examples:</strong></p>
-<p>We have been using bookdown for the Ocean Health Index: <a href="http://ohi-science.org/data-science-training"><strong>ohi-science.org/data-science-training</strong></a> and Openscapes: <a href="https://openscapes.org/series"><strong>openscapes.org/series</strong></a>.<br />
-And R Markdown is much more than books and websites – here’s a <a href="http://rmarkdown.rstudio.com/lesson-1.html"><strong>one-minute video about R Markdown</strong></a> to get you excited.</p>
+<p>Example text</p>
 <hr />
-<div id="learn-all-about-bookdown" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Learn all about Bookdown</h2>
-<p>The best way to learn more about bookdown is from Yihui Xie himself. You can read his book <a href="https://bookdown.org/yihui/bookdown/">bookdown: Authoring Books and Technical Documents with R Markdown</a> or watch his webinar <a href="https://www.rstudio.com/resources/webinars/introducing-bookdown/">introducing bookdown</a>.</p>
 
-</div>
 </div>
             </section>
 
