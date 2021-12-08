@@ -1,5 +1,2 @@
-# bookdown-tutorial
-Mini tutorial for bookdown 
-
-
-afdafadjl
+# bayesian-finance
+Capstone Project for Bayesian Statistics 
