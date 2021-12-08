@@ -14,7 +14,7 @@ description: "Bayesian Statistics Capstone Project"
 
 # Welcome {#welcome}
 
-Introduction...
+Introduction..
 
 ----
 
