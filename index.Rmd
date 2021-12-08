@@ -1,5 +1,5 @@
 --- 
-title: "Bayesian Finance: Modeling S&P 500 Company's Earnings"
+title: "Bayesian Finance: Modeling Earnings for S&P 500 Companies"
 author: "Nicholas Di, Nolan Meyer, Duc Ngo"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
