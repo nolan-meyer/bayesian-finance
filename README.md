@@ -1,2 +1,3 @@
 # bayesian-finance
-Capstone Project for Bayesian Statistics 
+
+Capstone Project for STAT 454: Bayesian Statistics 

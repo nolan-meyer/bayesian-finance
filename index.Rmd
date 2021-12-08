@@ -3,10 +3,8 @@ title: "Bayesian Finance: Modeling Earnings for S&P 500 Companies"
 author: "Nicholas Di, Nolan Meyer, Duc Ngo"
 date: "Macalester College, Fall 2021"
 site: bookdown::bookdown_site
-# output: bookdown::gitbook
+output: bookdown::gitbook
 documentclass: book
-bibliography: [book.bib, packages.bib]
-biblio-style: apalike
 link-citations: yes
 github-repo: openscapes/series
 description: "Bayesian Statistics Capstone Project"
