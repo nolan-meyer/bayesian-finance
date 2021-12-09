@@ -12,11 +12,16 @@ description: "Bayesian Statistics Capstone Project"
 
 # Welcome {#welcome}
 
-Introduction..
+## Introduction
+
+Add intro here...
 
 ----
 
-Example text
+We can add these line thingys lol
 
 ----
 
+## Motivation
+
+Add motivations here...
