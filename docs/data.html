@@ -54,6 +54,70 @@
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
 
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 
 <link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css" />
@@ -83,7 +147,8 @@
 <ul>
 <li class="chapter" data-level="2.1" data-path="data.html"><a href="data.html#data-source"><i class="fa fa-check"></i><b>2.1</b> Data Source</a></li>
 <li class="chapter" data-level="2.2" data-path="data.html"><a href="data.html#variables"><i class="fa fa-check"></i><b>2.2</b> Variables</a></li>
-<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>2.3</b> Initial Explorations</a></li>
+<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a></li>
+<li class="chapter" data-level="2.4" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>2.4</b> Initial Explorations</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a></li>
 <li class="chapter" data-level="4" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>4</b> Final Model</a></li>
@@ -172,8 +237,40 @@
 </tbody>
 </table>
 </div>
-<div id="initial-explorations" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Initial Explorations</h2>
+<div id="data-cleaning" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Data Cleaning</h2>
+<p>First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling Variables of Interest</span></span>
+<span id="cb1-2"><a href="data.html#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb1-3"><a href="data.html#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EARNINGS_Scaled =</span> EARNINGS<span class="sc">/</span><span class="dv">1000000000</span>,</span>
+<span id="cb1-4"><a href="data.html#cb1-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">CASH_Scaled =</span> CASH<span class="sc">/</span><span class="dv">1000000000</span>,</span>
+<span id="cb1-5"><a href="data.html#cb1-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">MARKET.CAP_Scaled =</span> MARKET.CAP<span class="sc">/</span><span class="dv">1000000000</span>,</span>
+<span id="cb1-6"><a href="data.html#cb1-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">Earnings_next_year_Scaled =</span> Earnings_next_year<span class="sc">/</span><span class="dv">1000000000</span>,</span>
+<span id="cb1-7"><a href="data.html#cb1-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_Scaled =</span> SALES<span class="sc">/</span><span class="dv">1000000000</span>)</span></code></pre></div>
+<p>Next, we added lagged variables for earnings and sales as we believe information from previous years will help predict future metrics.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="data.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Adding Lagged Variables</span></span>
+<span id="cb2-2"><a href="data.html#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="data.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="data.html#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EARNINGS_1_YEAR_AGO =</span> <span class="fu">lead</span>(EARNINGS_Scaled, <span class="at">n =</span> <span class="dv">1</span>), </span>
+<span id="cb2-5"><a href="data.html#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">EARNINGS_2_YEAR_AGO =</span> <span class="fu">lead</span>(EARNINGS_Scaled, <span class="at">n =</span> <span class="dv">2</span>),</span>
+<span id="cb2-6"><a href="data.html#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">EARNINGS_3_YEAR_AGO =</span> <span class="fu">lead</span>(EARNINGS_Scaled, <span class="at">n =</span> <span class="dv">3</span>),</span>
+<span id="cb2-7"><a href="data.html#cb2-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">EARNINGS_4_YEAR_AGO =</span> <span class="fu">lead</span>(EARNINGS_Scaled, <span class="at">n =</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-8"><a href="data.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SALES_1_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">1</span>),</span>
+<span id="cb2-9"><a href="data.html#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_2_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">2</span>),</span>
+<span id="cb2-10"><a href="data.html#cb2-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_3_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">3</span>),</span>
+<span id="cb2-11"><a href="data.html#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_4_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">4</span>))</span></code></pre></div>
+</div>
+<div id="initial-explorations" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Initial Explorations</h2>
+<p>After collecting the data, we then looked for the distribution of the companies within the S&amp;P 500. The first plot we are going to create is the number of companies within the period:</p>
+<p><img src="series_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>As we see above, we have data for about 70% of the companies in the S&amp;P 500 for the first year of our data, and by 2021 we have about every single company within the index. It is important for us to have data on as many companies as possible over this time period so that we can better capture trends and make more accurate models based on the data.</p>
+<p><img src="series_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Next, we investigated how market cap, specifically the sum of all the companies’ market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.</p>
+<p><img src="series_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Our main objective with this project is to be able to accurately predict future earnings using metrics like sales, previous earnings, and other variables like the sector of the company. We found that overall, among the top 50 companies (based on market cap), there were positive relationships between earning and sales. This relationship varies based on the market sector, with IT having the most positive relationship, and Consumer Staples having the least positive relationship. This indicates to us that both sector and sales may be important predictors of earnings that we should explore using in our future models.</p>
+<p><img src="series_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+<p>For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes.</p>
 
 </div>
 </div>

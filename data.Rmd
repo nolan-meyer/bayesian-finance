@@ -27,4 +27,197 @@ The main variables that are used in this project are defined below:
 | Earnings_next_year  | The amount of money in dollars that the company earns in the following year                                 |               
 
 
+
+
+## Data Cleaning 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r, echo=FALSE}
+library(tidyverse)         # for reading in data, graphing, and cleaning
+library(tidymodels)        # for modeling ... tidily
+library(usemodels)         # for suggesting step_XXX() functions
+library(glmnet)            # for regularized regression, including LASSO
+library(naniar)            # for examining missing values (NAs)
+library(lubridate)         # for date manipulation
+library(moderndive)        # for King County housing data
+library(vip)               # for variable importance plots
+library(rmarkdown)         # for paged tables
+library(dplyr)
+library(janitor)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(bayesforecast)    # Bayes Forecasting (Playing around) 
+library(bayesrules)
+library(tidyverse)
+library(rstanarm)
+library(broom.mixed)
+library(tidybayes)
+library(bayesplot)
+library(ggplot2)
+```
+
+```{r, echo=FALSE}
+#Loading Datasets
+data <- read.csv("FINALDATASET.csv")
+rand_data <- read.csv("RandomCompnay.csv") #random subset of "data"
+```
+
+```{r, echo=FALSE}
+#Selecting necessary variables
+data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALES", "CASH", "Name", "Sector", "Earnings_next_year"))
+
+rand_data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALES", "CASH", "Name", "Sector", "Earnings_next_year"))
+```
+
+First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.
+
+```{r}
+#Scaling Variables of Interest
+data <- data %>% 
+  mutate(EARNINGS_Scaled = EARNINGS/1000000000,
+         CASH_Scaled = CASH/1000000000,
+         MARKET.CAP_Scaled = MARKET.CAP/1000000000,
+         Earnings_next_year_Scaled = Earnings_next_year/1000000000,
+         SALES_Scaled = SALES/1000000000)
+```
+
+Next, we added lagged variables for earnings and sales as we believe information from previous years will help predict future metrics.
+```{r}
+#Adding Lagged Variables
+data <- data %>% 
+  group_by(COMPANY) %>%
+  mutate(EARNINGS_1_YEAR_AGO = lead(EARNINGS_Scaled, n = 1), 
+         EARNINGS_2_YEAR_AGO = lead(EARNINGS_Scaled, n = 2),
+         EARNINGS_3_YEAR_AGO = lead(EARNINGS_Scaled, n = 3),
+         EARNINGS_4_YEAR_AGO = lead(EARNINGS_Scaled, n = 4)) %>% 
+  mutate(SALES_1_YEAR_AGO = lead(SALES_Scaled, n = 1),
+         SALES_2_YEAR_AGO = lead(SALES_Scaled, n = 2),
+         SALES_3_YEAR_AGO = lead(SALES_Scaled, n = 3),
+         SALES_4_YEAR_AGO = lead(SALES_Scaled, n = 4))
+```
+
+```{r, echo = FALSE}
+#Scaling Variables of Interest & Adding Lagged Variables to random subset of full data
+rand_data <- rand_data %>%
+  mutate(EARNINGS_Scaled = EARNINGS/1000000000,
+         CASH_Scaled = CASH/1000000000,
+         SALES_Scaled = SALES/1000000000,
+         MARKET.CAP_Scaled = MARKET.CAP/1000000000,
+         Earnings_next_year_Scaled = Earnings_next_year/1000000000,
+         SALES_Scaled = SALES/1000000000,
+         Earnings_1_years_ago = lead(EARNINGS_Scaled),
+         Earnings_2_years_ago = lead(EARNINGS_Scaled, n =2),
+         Earnings_3_years_ago = lead(EARNINGS_Scaled, n =3),
+         Earnings_4_years_ago = lead(EARNINGS_Scaled, n =4)) %>%
+  mutate(SALES_1_YEAR_AGO = lead(SALES_Scaled, n = 1),
+         SALES_2_YEAR_AGO = lead(SALES_Scaled, n = 2),
+         SALES_3_YEAR_AGO = lead(SALES_Scaled, n = 3),
+         SALES_4_YEAR_AGO = lead(SALES_Scaled, n = 4))
+```
+
+
+
+
 ## Initial Explorations
+
+After collecting the data, we then looked for the distribution of the companies within the S&P 500. The first plot we are going to create is the number of companies within the period: 
+
+```{r, echo=FALSE}
+#First Viz
+tabyl(data$YEAR) %>% 
+  ggplot(aes(x= `data$YEAR`, y = n)) +
+  geom_line()+
+  xlab("")+
+  ylab("") + 
+  labs(title = "Number of Companies Within the Period") + 
+  theme_minimal()
+```
+
+As we see above, we have data for about 70% of the companies in the S&P 500 for the first year of our data, and by 2021 we have about every single company within the index. It is important for us to have data on as many companies as possible over this time period so that we can better capture trends and make more accurate models based on the data. 
+
+
+```{r, echo=FALSE}
+#Second Viz 
+sumUSA <- data %>% 
+  group_by(YEAR) %>% 
+  summarise(sumMarket_cap = sum(`MARKET.CAP`), 
+            sumEarnings = sum(EARNINGS), 
+            sumSALES = sum(SALES), 
+            sumCASH = sum(CASH)) 
+
+sumUSA %>% 
+  ggplot(aes(x = YEAR, y = sumMarket_cap)) + geom_line() + theme_minimal() + labs(x = "Year") +
+  ggtitle("Market Cap within Dataset")
+```
+
+Next, we investigated how market cap, specifically the sum of all the companies' market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.
+
+```{r, echo=FALSE}
+#Third Viz
+temp <- data %>% 
+  group_by(COMPANY) %>% 
+  summarize(count = n(), 
+            mean_MC = mean(MARKET.CAP)) %>% 
+  filter(count == 23) %>% 
+  arrange(desc(mean_MC)) %>% 
+  head(50)
+temp <- temp$COMPANY
+data_2 <- data %>%  
+  filter(COMPANY %in% temp) 
+data_2 %>% 
+  ggplot(aes(y = EARNINGS, x= SALES, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+
+  theme_minimal()+
+  ggtitle("Sales and Earnings Relationship by Sector \n Among top 50 Companies by Market Cap")
+```
+
+Our main objective with this project is to be able to accurately predict future earnings using metrics like sales, previous earnings, and other variables like the sector of the company. We found that overall, among the top 50 companies (based on market cap), there were positive relationships between earning and sales. This relationship varies based on the market sector, with IT having the most positive relationship, and Consumer Staples having the least positive relationship. This indicates to us that both sector and sales may be important predictors of earnings that we should explore using in our future models.
+
+```{r, fig.width=10, fig.height=8, echo=FALSE}
+#Fourth Viz
+p1 <- data %>% 
+  ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_Scaled, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+
+  theme_minimal()+
+  ggtitle("Same Year")
+p2 <- data %>% 
+  ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_1_YEAR_AGO, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+
+  theme_minimal()+
+  ggtitle("1 year ago")
+p3 <- data %>% 
+  ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_2_YEAR_AGO, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+
+  theme_minimal()+
+  ggtitle("2 year ago")
+p4 <- data %>% 
+  ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_3_YEAR_AGO, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+
+  theme_minimal()+
+  ggtitle("3 year ago")
+p5 <- data %>% 
+  ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_4_YEAR_AGO, color = Sector))+
+  geom_point(alpha = 0.20)+
+  geom_smooth(method = 'lm', formula = y ~ x)+ 
+  theme_minimal()+
+  ggtitle("4 year ago")
+
+ggarrange(p1, p2, p3, p4, p5,
+         ncol = 3, nrow = 2,
+         common.legend = TRUE, legend = "bottom")
+```
+
+For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes. 
+
+
+
+
