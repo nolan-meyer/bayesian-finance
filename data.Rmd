@@ -2,6 +2,29 @@
 
 ## Data Source
 
+Our data includes financial information on companies in the S&P 500 stock index from 1999-2021. This information was scraped from Yahoo Finance in November of 2021, and collected in a csv format for data analysis.
+
+To collect the data, first, we got the list of the current 500 S&P companies from Slickchart (https://www.slickcharts.com/sp500). After having the list of the companies, we then moved on to the financials information of the listed companies on yahoo finance (https://finance.yahoo.com/) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using BeautifulSoup library in Python and turned that into a CSV file. 
+
+After getting the data, our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.
+
+
+
 ## Variables
+
+The main variables that are used in this project are defined below:
+
+| Variable            | Meaning                                                                                                     |
+|---------------------|-------------------------------------------------------------------------------------------------------------|
+| YEAR                | The financial year of the company                                                                           |
+| COMPANY             | The company’s stock abbreviation symbol                                                                     |
+| MARKET.CAP          | The total market capitalization of the company (Volume * Price)                                             |
+| EARNINGS            | The earnings in dollars for the previous year for the given company                                         |
+| SALES               | How much the company sold in dollars last year                                                              |
+| CASH                | How much cash the company has in dollars at the end of the previous year                                    |
+| Name                | The full name of the company                                                                                |
+| Sector              | The name of the sector that the company is a part of                                                        |
+| Earnings_next_year  | The amount of money in dollars that the company earns in the following year                                 |               
+
 
 ## Initial Explorations

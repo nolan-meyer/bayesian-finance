@@ -111,9 +111,63 @@
 <h1><span class="header-section-number">Chapter 3</span> Data</h1>
 <div id="data-source" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Data Source</h2>
+<p>Our data includes financial information on companies in the S&amp;P 500 stock index from 1999-2021. This information was scraped from Yahoo Finance in November of 2021, and collected in a csv format for data analysis.</p>
+<p>To collect the data, first, we got the list of the current 500 S&amp;P companies from Slickchart (<a href="https://www.slickcharts.com/sp500" class="uri">https://www.slickcharts.com/sp500</a>). After having the list of the companies, we then moved on to the financials information of the listed companies on yahoo finance (<a href="https://finance.yahoo.com/" class="uri">https://finance.yahoo.com/</a>) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using BeautifulSoup library in Python and turned that into a CSV file.</p>
+<p>After getting the data, our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.</p>
 </div>
 <div id="variables" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Variables</h2>
+<p>The main variables that are used in this project are defined below:</p>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>YEAR</td>
+<td>The financial year of the company</td>
+</tr>
+<tr class="even">
+<td>COMPANY</td>
+<td>The company’s stock abbreviation symbol</td>
+</tr>
+<tr class="odd">
+<td>MARKET.CAP</td>
+<td>The total market capitalization of the company (Volume * Price)</td>
+</tr>
+<tr class="even">
+<td>EARNINGS</td>
+<td>The earnings in dollars for the previous year for the given company</td>
+</tr>
+<tr class="odd">
+<td>SALES</td>
+<td>How much the company sold in dollars last year</td>
+</tr>
+<tr class="even">
+<td>CASH</td>
+<td>How much cash the company has in dollars at the end of the previous year</td>
+</tr>
+<tr class="odd">
+<td>Name</td>
+<td>The full name of the company</td>
+</tr>
+<tr class="even">
+<td>Sector</td>
+<td>The name of the sector that the company is a part of</td>
+</tr>
+<tr class="odd">
+<td>Earnings_next_year</td>
+<td>The amount of money in dollars that the company earns in the following year</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="initial-explorations" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Initial Explorations</h2>
