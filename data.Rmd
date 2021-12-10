@@ -73,6 +73,10 @@ data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALE
 rand_data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALES", "CASH", "Name", "Sector", "Earnings_next_year"))
 ```
 
+
+
+### Data Pre-Processing
+
 First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.
 
 ```{r}
@@ -119,6 +123,47 @@ rand_data <- rand_data %>%
          SALES_4_YEAR_AGO = lead(SALES_Scaled, n = 4))
 ```
 
+
+
+### Graphing Outliers 
+
+We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings the next year. Earnings_next_year_Scaled is the company's earnings the next year. So Earnings_next_year_Scaled value of 1 for Company X in 2015 can be interpreted as 1 billion dollars in earnings in 2016. 
+
+We explore Earnings next year below: 
+
+```{r}
+#Graphing Outliers
+data %>% ggplot(aes(x = Earnings_next_year_Scaled)) + 
+  geom_boxplot()
+
+data %>% ggplot(aes(x = EARNINGS_Scaled, y= Earnings_next_year_Scaled))+
+  geom_point()
+```
+
+There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.  
+
+We removed outliers by classifying them as one if they are 1.5*IQR (Interquartile Range)
+
+```{r}
+Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
+iqr <- IQR(data$Earnings_next_year_Scaled, na.rm = TRUE)
+up <-  Q[2]+1.5*iqr # Upper Range  
+low<- Q[1]-1.5*iqr # Lower Range
+eliminated<- subset(data, data$Earnings_next_year_Scaled > (Q[1] - 1.5*iqr) & data$Earnings_next_year_Scaled < (Q[2]+1.5*iqr))
+data_elimatedO <- eliminated
+```
+
+We graph the data points without outliers below:
+
+```{r}
+data_elimatedO %>% ggplot(aes(x = Earnings_next_year_Scaled)) + 
+  geom_boxplot()
+
+data_elimatedO %>% ggplot(aes(x = EARNINGS_Scaled, y= Earnings_next_year_Scaled))+
+  geom_point()
+```
+
+This is much better as the data points are closer in proximity.
 
 
 
@@ -217,7 +262,4 @@ ggarrange(p1, p2, p3, p4, p5,
 ```
 
 For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes. 
-
-
-
 

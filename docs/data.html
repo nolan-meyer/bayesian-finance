@@ -147,16 +147,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.1" data-path="data.html"><a href="data.html#data-source"><i class="fa fa-check"></i><b>2.1</b> Data Source</a></li>
 <li class="chapter" data-level="2.2" data-path="data.html"><a href="data.html#variables"><i class="fa fa-check"></i><b>2.2</b> Variables</a></li>
-<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a></li>
+<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="data.html"><a href="data.html#data-pre-processing"><i class="fa fa-check"></i><b>2.3.1</b> Data Pre-Processing</a></li>
+<li class="chapter" data-level="2.3.2" data-path="data.html"><a href="data.html#graphing-outliers"><i class="fa fa-check"></i><b>2.3.2</b> Graphing Outliers</a></li>
+</ul></li>
 <li class="chapter" data-level="2.4" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>2.4</b> Initial Explorations</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a></li>
+<li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="modeling.html"><a href="modeling.html#set-up"><i class="fa fa-check"></i><b>3.1</b> Set Up</a></li>
+<li class="chapter" data-level="3.2" data-path="modeling.html"><a href="modeling.html#model-1"><i class="fa fa-check"></i><b>3.2</b> Model 1</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="modeling.html"><a href="modeling.html#model-structure"><i class="fa fa-check"></i><b>3.2.1</b> Model Structure</a></li>
+<li class="chapter" data-level="3.2.2" data-path="modeling.html"><a href="modeling.html#model-evaluation"><i class="fa fa-check"></i><b>3.2.2</b> Model Evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="modeling.html"><a href="modeling.html#model-1-w-interaction"><i class="fa fa-check"></i><b>3.3</b> Model 1 w/ Interaction</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="modeling.html"><a href="modeling.html#model-structure-1"><i class="fa fa-check"></i><b>3.3.1</b> Model Structure</a></li>
+<li class="chapter" data-level="3.3.2" data-path="modeling.html"><a href="modeling.html#model-evaluation-1"><i class="fa fa-check"></i><b>3.3.2</b> Model Evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="modeling.html"><a href="modeling.html#model-2"><i class="fa fa-check"></i><b>3.4</b> Model 2</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="modeling.html"><a href="modeling.html#model-structure-2"><i class="fa fa-check"></i><b>3.4.1</b> Model Structure</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>4</b> Final Model</a></li>
 <li class="chapter" data-level="5" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>5</b> Reflection</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>5.1</b> Next Steps</a></li>
 <li class="chapter" data-level="5.2" data-path="reflection.html"><a href="reflection.html#acknowledgements"><i class="fa fa-check"></i><b>5.2</b> Acknowledgements</a></li>
 <li class="chapter" data-level="5.3" data-path="reflection.html"><a href="reflection.html#citations"><i class="fa fa-check"></i><b>5.3</b> Citations</a></li>
+<li class="chapter" data-level="5.4" data-path="reflection.html"><a href="reflection.html#code-appendix"><i class="fa fa-check"></i><b>5.4</b> Code Appendix</a></li>
 </ul></li>
 </ul>
 
@@ -239,6 +261,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="data-cleaning" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Data Cleaning</h2>
+<div id="data-pre-processing" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Data Pre-Processing</h3>
 <p>First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling Variables of Interest</span></span>
 <span id="cb1-2"><a href="data.html#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
@@ -260,16 +284,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-10"><a href="data.html#cb2-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_3_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">3</span>),</span>
 <span id="cb2-11"><a href="data.html#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">SALES_4_YEAR_AGO =</span> <span class="fu">lead</span>(SALES_Scaled, <span class="at">n =</span> <span class="dv">4</span>))</span></code></pre></div>
 </div>
+<div id="graphing-outliers" class="section level3" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Graphing Outliers</h3>
+<p>We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings the next year. Earnings_next_year_Scaled is the company’s earnings the next year. So Earnings_next_year_Scaled value of 1 for Company X in 2015 can be interpreted as 1 billion dollars in earnings in 2016.</p>
+<p>We explore Earnings next year below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graphing Outliers</span></span>
+<span id="cb3-2"><a href="data.html#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
+<span id="cb3-3"><a href="data.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="data.html#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled))<span class="sc">+</span></span>
+<span id="cb4-2"><a href="data.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.</p>
+<p>We removed outliers by classifying them as one if they are 1.5*IQR (Interquartile Range)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data.html#cb5-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="fu">quantile</span>(data<span class="sc">$</span>Earnings_next_year_Scaled, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">25</span>, .<span class="dv">75</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="data.html#cb5-2" aria-hidden="true" tabindex="-1"></a>iqr <span class="ot">&lt;-</span> <span class="fu">IQR</span>(data<span class="sc">$</span>Earnings_next_year_Scaled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-3"><a href="data.html#cb5-3" aria-hidden="true" tabindex="-1"></a>up <span class="ot">&lt;-</span>  Q[<span class="dv">2</span>]<span class="sc">+</span><span class="fl">1.5</span><span class="sc">*</span>iqr <span class="co"># Upper Range  </span></span>
+<span id="cb5-4"><a href="data.html#cb5-4" aria-hidden="true" tabindex="-1"></a>low<span class="ot">&lt;-</span> Q[<span class="dv">1</span>]<span class="sc">-</span><span class="fl">1.5</span><span class="sc">*</span>iqr <span class="co"># Lower Range</span></span>
+<span id="cb5-5"><a href="data.html#cb5-5" aria-hidden="true" tabindex="-1"></a>eliminated<span class="ot">&lt;-</span> <span class="fu">subset</span>(data, data<span class="sc">$</span>Earnings_next_year_Scaled <span class="sc">&gt;</span> (Q[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.5</span><span class="sc">*</span>iqr) <span class="sc">&amp;</span> data<span class="sc">$</span>Earnings_next_year_Scaled <span class="sc">&lt;</span> (Q[<span class="dv">2</span>]<span class="sc">+</span><span class="fl">1.5</span><span class="sc">*</span>iqr))</span>
+<span id="cb5-6"><a href="data.html#cb5-6" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="ot">&lt;-</span> eliminated</span></code></pre></div>
+<p>We graph the data points without outliers below:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="data.html#cb6-1" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
+<span id="cb6-2"><a href="data.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="data.html#cb7-1" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled))<span class="sc">+</span></span>
+<span id="cb7-2"><a href="data.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>This is much better as the data points are closer in proximity.</p>
+</div>
+</div>
 <div id="initial-explorations" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Initial Explorations</h2>
 <p>After collecting the data, we then looked for the distribution of the companies within the S&amp;P 500. The first plot we are going to create is the number of companies within the period:</p>
-<p><img src="series_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="series_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>As we see above, we have data for about 70% of the companies in the S&amp;P 500 for the first year of our data, and by 2021 we have about every single company within the index. It is important for us to have data on as many companies as possible over this time period so that we can better capture trends and make more accurate models based on the data.</p>
-<p><img src="series_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="series_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Next, we investigated how market cap, specifically the sum of all the companies’ market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.</p>
-<p><img src="series_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="series_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>Our main objective with this project is to be able to accurately predict future earnings using metrics like sales, previous earnings, and other variables like the sector of the company. We found that overall, among the top 50 companies (based on market cap), there were positive relationships between earning and sales. This relationship varies based on the market sector, with IT having the most positive relationship, and Consumer Staples having the least positive relationship. This indicates to us that both sector and sales may be important predictors of earnings that we should explore using in our future models.</p>
-<p><img src="series_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+<p><img src="series_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
 <p>For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes.</p>
 
 </div>
@@ -334,6 +387,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

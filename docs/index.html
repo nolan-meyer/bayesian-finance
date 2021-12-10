@@ -147,16 +147,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.1" data-path="data.html"><a href="data.html#data-source"><i class="fa fa-check"></i><b>2.1</b> Data Source</a></li>
 <li class="chapter" data-level="2.2" data-path="data.html"><a href="data.html#variables"><i class="fa fa-check"></i><b>2.2</b> Variables</a></li>
-<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a></li>
+<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="data.html"><a href="data.html#data-pre-processing"><i class="fa fa-check"></i><b>2.3.1</b> Data Pre-Processing</a></li>
+<li class="chapter" data-level="2.3.2" data-path="data.html"><a href="data.html#graphing-outliers"><i class="fa fa-check"></i><b>2.3.2</b> Graphing Outliers</a></li>
+</ul></li>
 <li class="chapter" data-level="2.4" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>2.4</b> Initial Explorations</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a></li>
+<li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="modeling.html"><a href="modeling.html#set-up"><i class="fa fa-check"></i><b>3.1</b> Set Up</a></li>
+<li class="chapter" data-level="3.2" data-path="modeling.html"><a href="modeling.html#model-1"><i class="fa fa-check"></i><b>3.2</b> Model 1</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="modeling.html"><a href="modeling.html#model-structure"><i class="fa fa-check"></i><b>3.2.1</b> Model Structure</a></li>
+<li class="chapter" data-level="3.2.2" data-path="modeling.html"><a href="modeling.html#model-evaluation"><i class="fa fa-check"></i><b>3.2.2</b> Model Evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="modeling.html"><a href="modeling.html#model-1-w-interaction"><i class="fa fa-check"></i><b>3.3</b> Model 1 w/ Interaction</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="modeling.html"><a href="modeling.html#model-structure-1"><i class="fa fa-check"></i><b>3.3.1</b> Model Structure</a></li>
+<li class="chapter" data-level="3.3.2" data-path="modeling.html"><a href="modeling.html#model-evaluation-1"><i class="fa fa-check"></i><b>3.3.2</b> Model Evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="modeling.html"><a href="modeling.html#model-2"><i class="fa fa-check"></i><b>3.4</b> Model 2</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="modeling.html"><a href="modeling.html#model-structure-2"><i class="fa fa-check"></i><b>3.4.1</b> Model Structure</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>4</b> Final Model</a></li>
 <li class="chapter" data-level="5" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>5</b> Reflection</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>5.1</b> Next Steps</a></li>
 <li class="chapter" data-level="5.2" data-path="reflection.html"><a href="reflection.html#acknowledgements"><i class="fa fa-check"></i><b>5.2</b> Acknowledgements</a></li>
 <li class="chapter" data-level="5.3" data-path="reflection.html"><a href="reflection.html#citations"><i class="fa fa-check"></i><b>5.3</b> Citations</a></li>
+<li class="chapter" data-level="5.4" data-path="reflection.html"><a href="reflection.html#code-appendix"><i class="fa fa-check"></i><b>5.4</b> Code Appendix</a></li>
 </ul></li>
 </ul>
 
@@ -255,6 +277,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

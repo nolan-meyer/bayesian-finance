@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Final Model | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies</title>
+  <title>Chapter 3 Graphing Outliers | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies</title>
   <meta name="description" content="Bayesian Statistics Capstone Project" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Final Model | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies" />
+  <meta property="og:title" content="Chapter 3 Graphing Outliers | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Final Model | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies" />
+  <meta name="twitter:title" content="Chapter 3 Graphing Outliers | Bayesian Finance: Modeling Earnings for S&amp;P 500 Companies" />
   
   <meta name="twitter:description" content="Bayesian Statistics Capstone Project" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="modeling.html"/>
-<link rel="next" href="reflection.html"/>
+<link rel="prev" href="data.html"/>
+<link rel="next" href="modeling.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -147,38 +147,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.1" data-path="data.html"><a href="data.html#data-source"><i class="fa fa-check"></i><b>2.1</b> Data Source</a></li>
 <li class="chapter" data-level="2.2" data-path="data.html"><a href="data.html#variables"><i class="fa fa-check"></i><b>2.2</b> Variables</a></li>
-<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a>
-<ul>
-<li class="chapter" data-level="2.3.1" data-path="data.html"><a href="data.html#data-pre-processing"><i class="fa fa-check"></i><b>2.3.1</b> Data Pre-Processing</a></li>
-<li class="chapter" data-level="2.3.2" data-path="data.html"><a href="data.html#graphing-outliers"><i class="fa fa-check"></i><b>2.3.2</b> Graphing Outliers</a></li>
-</ul></li>
+<li class="chapter" data-level="2.3" data-path="data.html"><a href="data.html#data-cleaning"><i class="fa fa-check"></i><b>2.3</b> Data Cleaning</a></li>
 <li class="chapter" data-level="2.4" data-path="data.html"><a href="data.html#initial-explorations"><i class="fa fa-check"></i><b>2.4</b> Initial Explorations</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>3</b> Modeling</a>
+<li class="chapter" data-level="3" data-path="graphing-outliers.html"><a href="graphing-outliers.html"><i class="fa fa-check"></i><b>3</b> Graphing Outliers</a></li>
+<li class="chapter" data-level="4" data-path="modeling.html"><a href="modeling.html"><i class="fa fa-check"></i><b>4</b> Modeling</a></li>
+<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a></li>
+<li class="chapter" data-level="6" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>6</b> Reflection</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="modeling.html"><a href="modeling.html#set-up"><i class="fa fa-check"></i><b>3.1</b> Set Up</a></li>
-<li class="chapter" data-level="3.2" data-path="modeling.html"><a href="modeling.html#model-1"><i class="fa fa-check"></i><b>3.2</b> Model 1</a>
-<ul>
-<li class="chapter" data-level="3.2.1" data-path="modeling.html"><a href="modeling.html#model-structure"><i class="fa fa-check"></i><b>3.2.1</b> Model Structure</a></li>
-<li class="chapter" data-level="3.2.2" data-path="modeling.html"><a href="modeling.html#model-evaluation"><i class="fa fa-check"></i><b>3.2.2</b> Model Evaluation</a></li>
-</ul></li>
-<li class="chapter" data-level="3.3" data-path="modeling.html"><a href="modeling.html#model-1-w-interaction"><i class="fa fa-check"></i><b>3.3</b> Model 1 w/ Interaction</a>
-<ul>
-<li class="chapter" data-level="3.3.1" data-path="modeling.html"><a href="modeling.html#model-structure-1"><i class="fa fa-check"></i><b>3.3.1</b> Model Structure</a></li>
-<li class="chapter" data-level="3.3.2" data-path="modeling.html"><a href="modeling.html#model-evaluation-1"><i class="fa fa-check"></i><b>3.3.2</b> Model Evaluation</a></li>
-</ul></li>
-<li class="chapter" data-level="3.4" data-path="modeling.html"><a href="modeling.html#model-2"><i class="fa fa-check"></i><b>3.4</b> Model 2</a>
-<ul>
-<li class="chapter" data-level="3.4.1" data-path="modeling.html"><a href="modeling.html#model-structure-2"><i class="fa fa-check"></i><b>3.4.1</b> Model Structure</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>4</b> Final Model</a></li>
-<li class="chapter" data-level="5" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>5</b> Reflection</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>5.1</b> Next Steps</a></li>
-<li class="chapter" data-level="5.2" data-path="reflection.html"><a href="reflection.html#acknowledgements"><i class="fa fa-check"></i><b>5.2</b> Acknowledgements</a></li>
-<li class="chapter" data-level="5.3" data-path="reflection.html"><a href="reflection.html#citations"><i class="fa fa-check"></i><b>5.3</b> Citations</a></li>
-<li class="chapter" data-level="5.4" data-path="reflection.html"><a href="reflection.html#code-appendix"><i class="fa fa-check"></i><b>5.4</b> Code Appendix</a></li>
+<li class="chapter" data-level="6.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>6.1</b> Next Steps</a></li>
+<li class="chapter" data-level="6.2" data-path="reflection.html"><a href="reflection.html#acknowledgements"><i class="fa fa-check"></i><b>6.2</b> Acknowledgements</a></li>
+<li class="chapter" data-level="6.3" data-path="reflection.html"><a href="reflection.html#citations"><i class="fa fa-check"></i><b>6.3</b> Citations</a></li>
+<li class="chapter" data-level="6.4" data-path="reflection.html"><a href="reflection.html#code-appendix"><i class="fa fa-check"></i><b>6.4</b> Code Appendix</a></li>
 </ul></li>
 </ul>
 
@@ -197,8 +177,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="finalmodel" class="section level1" number="4">
-<h1><span class="header-section-number">Chapter 4</span> Final Model</h1>
+<div id="graphing-outliers" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Graphing Outliers</h1>
+<p>We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings the next year. Earnings_next_year_Scaled is the company’s earnings the next year. So Earnings_next_year_Scaled value of 1 for Company X in 2015 can be interpreted as 1 billion dollars in earnings in 2016.</p>
+<p>We explore Earnings next year below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="graphing-outliers.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graphing Outliers</span></span>
+<span id="cb3-2"><a href="graphing-outliers.html#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
+<span id="cb3-3"><a href="graphing-outliers.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="graphing-outliers.html#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled))<span class="sc">+</span></span>
+<span id="cb4-2"><a href="graphing-outliers.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-11-2.png" width="672" />
+There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.</p>
+<p>I remove outliers by classifying them as one if they are 1.5*IQR (Interquartile Range)</p>
 
 </div>
             </section>
@@ -206,8 +197,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="modeling.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="reflection.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="modeling.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -261,20 +252,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>
