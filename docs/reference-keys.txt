@@ -16,10 +16,15 @@ model-evaluation
 model-1-w-interaction
 model-structure-1
 model-evaluation-1
+models-with-hierarchical-structure
 model-2
 model-structure-2
 model-3
 model-structure-3
+model-evaluations
+is-this-the-right-model
+how-accurate-are-the-models
+bayes-forecast
 finalmodel
 reflection
 next-steps

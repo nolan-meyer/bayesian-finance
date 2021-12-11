@@ -1,4 +1,4 @@
-# Modeling {#modeling}
+# Models w/o hierarchical structure {#modeling}
 
 ```{r, echo=FALSE}
 library(tidyverse)         # for reading in data, graphing, and cleaning
@@ -89,8 +89,6 @@ testing <- data_elimatedO %>%
 training <- anti_join(data_elimatedO, testing)
 ```
 
-
-
 ## Model 1
 
 ### Model Structure
@@ -160,6 +158,9 @@ pp_check(model_1_interact_no)
 Unfortunately, this model performs similarly to the previous and is not the best fit. 
 
 
+
+
+# Models with hierarchical structure
 
 ## Model 2
 
@@ -275,4 +276,380 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 \sigma_y  & \sim \text{Exp}(1.2) \\
 \sigma_0  & \sim \text{Exp}(1) \\
 \end{split}$$
+
+
+## Model Evaluations
+
+### Is this the right model? 
+
+Next we plot the posterior distributions and compare to the actual values observed in the data set. 
+
+```{r}
+pp_check(model_2) 
+pp_check(model_3)
+```
+
+Again, several company earnings's on the right seem to be causing model fitness difficulties. Both models run into this problem. 
+
+There seems to be no difference between model 2 and 3 in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models. 
+
+
+### How Accurate are the models? 
+
+
+**Model 2 - Specific Examples with companies:**
+
+Below, we compare our predictions for American Airlines. We plot 750 random values predicted from our predictions (out of 20,000). As we can see below our predictions range cover the actual value of earnings for 2020 fiscal year for both models. 
+
+```{r, echo=FALSE, include=FALSE}
+set.seed(84732)
+test_comp <- "AAL"
+
+test_1 <- testing %>% 
+  filter(COMPANY == test_comp)
+
+predict_next_year <- posterior_predict(
+  model_2_train, 
+  newdata = data.frame(test_1))
+
+most_recent_year <- testing %>% 
+   filter(COMPANY == test_comp) %>% 
+   filter(row_number()==1)
+
+most_recent_year <- most_recent_year$YEAR
+
+actual <- data %>% 
+  filter(COMPANY == test_comp & YEAR == most_recent_year+1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+
+Earnings2019 <- data %>% 
+  filter(COMPANY == test_comp & YEAR == most_recent_year) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+actual <- Earnings2019$EARNINGS_Scaled
+
+randomsample <- sample_n(as.data.frame(predict_next_year), 750)
+graphing_predictions <- randomsample %>% 
+  mutate(EARNINGS_Scaled = `1`,
+         YEAR = most_recent_year+1) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+```
+
+```{r}
+data %>% 
+  filter(COMPANY == test_comp) %>% 
+  filter(YEAR <= most_recent_year+1) %>% 
+  ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
+  geom_point() +
+  geom_line() +
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year, 
+                   xend = most_recent_year+1,
+                   y = actual, 
+                   yend = EARNINGS_Scaled),
+               alpha = 0.03,
+               colour = "red")
+# mcmc_areas(predict_next_year, prob = 0.8) +
+#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = "dashed", colour = "red") 
+#Need Help Because X scale is different
+```
+
+
+**Model 3 - Specific Examples with companies:**
+
+```{r, echo=FALSE, include=FALSE}
+set.seed(84732)
+test_comp <- "AAL"
+
+test_1 <- testing %>% 
+  filter(COMPANY == test_comp)
+
+predict_next_year <- posterior_predict(
+  model_3_train, 
+  newdata = data.frame(test_1))
+median(predict_next_year)
+
+most_recent_year <- testing %>% 
+   filter(COMPANY == test_comp) %>% 
+   filter(row_number()==1)
+most_recent_year <- most_recent_year$YEAR
+actual <- data %>% 
+  filter(COMPANY == test_comp & YEAR == most_recent_year-1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+actual <- actual$EARNINGS_Scaled
+
+randomsample <- sample_n(as.data.frame(predict_next_year), 750)
+graphing_predictions <- randomsample %>% 
+  mutate(EARNINGS_Scaled = `1`,
+         YEAR = most_recent_year) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year -1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+```
+
+```{r}
+data %>% 
+  filter(COMPANY == test_comp) %>% 
+  filter(YEAR <= most_recent_year) %>% 
+  ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
+  geom_point() +
+  geom_line() +
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year - 1, 
+                   xend = most_recent_year,
+                   y = actual, 
+                   yend = EARNINGS_Scaled),
+               alpha = 0.03,
+               colour = "red")
+# mcmc_areas(predict_next_year, prob = 0.8) +
+#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = "dashed", colour = "red") 
+```
+
+The predictions for the model_3 seem to be slightly better as more posterior predictive points are near the actual value for "2020".
+
+
+
+```{r, echo=FALSE, include=FALSE}
+# Computing Model 2 Metrics:
+set.seed(84732)
+predictions_mode_2 <- posterior_predict(
+  model_2_train, 
+  newdata = data.frame(testing))
+prediction_dataframe <- as.data.frame(predictions_mode_2)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),median),
+                    across(where(is.character),~"Median")))
+meadian_predictions <- tail(temp, 1)
+meadian_predictions <- t(meadian_predictions)
+meadian_predictions<-as.data.frame(meadian_predictions)
+meadian_predictions <- meadian_predictions %>% 
+  mutate(median = `20001`) %>% 
+  select(median)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .025),
+                    across(where(is.character),~"Lower95")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower95 <- predictions_lower %>% 
+  mutate(lower95 = `20001`) %>% 
+  select(lower95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .25),
+                    across(where(is.character),~"Lower50")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower50 <- predictions_lower %>% 
+  mutate(lower50 = `20001`) %>% 
+  select(lower50)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .975),
+                    across(where(is.character),~"Upper95")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper95 <- predictions_upper %>% 
+  mutate(upper95 = `20001`) %>% 
+  select(upper95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .75),
+                    across(where(is.character),~"Upper50")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper50 <- predictions_upper %>% 
+  mutate(upper50 = `20001`) %>% 
+  select(upper50)
+
+Testing_with_metrics <- cbind(testing, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, meadian_predictions)
+
+median_error <- Testing_with_metrics %>% 
+  mutate(absDist = abs(median - Earnings_next_year_Scaled))
+
+in_95 <- Testing_with_metrics %>% 
+  mutate(Is_95 = (Earnings_next_year_Scaled < upper95) & (Earnings_next_year_Scaled > lower95))
+
+in_50 <- Testing_with_metrics %>% 
+  mutate(Is_50 = (Earnings_next_year_Scaled < upper50) & (Earnings_next_year_Scaled > lower50))
+
+med <- median(median_error$absDist)
+mean95 <- mean(in_95$Is_95)
+mean50 <- mean(in_50$Is_50)
+model_2_metrics <- matrix(c(med,mean95,mean50), ncol = 3)
+colnames(model_2_metrics) <- c("MAE","Within95","Within50")
+model_2_metrics <- as.data.frame(model_2_metrics)
+```
+
+
+```{r, echo=FALSE, include=FALSE}
+# Computing Model 3 Metrics:
+testing_1 <- testing %>%
+  na.omit()
+  
+predictions_mode_2 <- posterior_predict(
+  model_3_train, 
+  newdata = data.frame(testing_1))
+prediction_dataframe <- as.data.frame(predictions_mode_2)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),median),
+                    across(where(is.character),~"Median")))
+meadian_predictions <- tail(temp, 1)
+meadian_predictions <- t(meadian_predictions)
+meadian_predictions<-as.data.frame(meadian_predictions)
+meadian_predictions <- meadian_predictions %>% 
+  mutate(median = `20001`) %>% 
+  select(median)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .025),
+                    across(where(is.character),~"Lower95")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower95 <- predictions_lower %>% 
+  mutate(lower95 = `20001`) %>% 
+  select(lower95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .25),
+                    across(where(is.character),~"Lower50")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower50 <- predictions_lower %>% 
+  mutate(lower50 = `20001`) %>% 
+  select(lower50)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .975),
+                    across(where(is.character),~"Upper95")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper95 <- predictions_upper %>% 
+  mutate(upper95 = `20001`) %>% 
+  select(upper95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .75),
+                    across(where(is.character),~"Upper50")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper50 <- predictions_upper %>% 
+  mutate(upper50 = `20001`) %>% 
+  select(upper50)
+
+Testing_with_metrics <- cbind(testing_1, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, meadian_predictions)
+median_error <- Testing_with_metrics %>% 
+  mutate(absDist = abs(median - Earnings_next_year_Scaled))
+
+in_95 <- Testing_with_metrics %>% 
+  mutate(Is_95 = (Earnings_next_year_Scaled < upper95) & (Earnings_next_year_Scaled > lower95))
+
+in_50 <- Testing_with_metrics %>% 
+  mutate(Is_50 = (Earnings_next_year_Scaled < upper50) & (Earnings_next_year_Scaled > lower50))
+
+median(median_error$absDist)
+mean(in_95$Is_95)
+mean(in_50$Is_50)
+med <- median(median_error$absDist)
+mean95 <- mean(in_95$Is_95)
+mean50 <- mean(in_50$Is_50)
+model_3_metrics <- matrix(c(med,mean95,mean50), ncol = 3)
+colnames(model_3_metrics) <- c("MAE","Within95","Within50")
+model_3_metrics <- as.data.frame(model_3_metrics)
+```
+
+
+**Evaluating Metrics**
+
+Model 2:
+
+```{r}
+model_2_metrics
+```
+
+Model 3:
+
+```{r}
+model_3_metrics
+```
+
+We can see that our model 3 preforms slightly better. Where our average median posterior prediction is off by .3697147 billion as opposed to model 2's .40 billion. Furthermore, our 95% and 50% interval values are both slightly better than model 2's. 
+
+
+**Shrinkage **
+
+Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models. 
+
+Model 2 Shrinkage:
+
+```{r, echo=FALSE}
+set.seed(84732)
+COMPANY_chains <- model_2 %>%
+  spread_draws(`(Intercept)`, b[,COMPANY]) %>%
+  mutate(mu_j = `(Intercept)` + b)
+COMPANY_summary_scaled <- COMPANY_chains %>%
+  select(-`(Intercept)`, -b) %>%
+  mean_qi(.width = 0.80) %>%
+  mutate(COMPANY = fct_reorder(COMPANY, mu_j))
+```
+
+```{r}
+ggplot(
+    sample_n(COMPANY_summary_scaled,70),
+    aes(x = COMPANY, y = mu_j, ymin = .lower, ymax = .upper)) +
+    geom_pointrange() +
+    geom_hline(yintercept = mean(data$Earnings_next_year_Scaled), linetype = "dashed") + 
+  xaxis_text(angle = 90, hjust = 1)
+```
+
+
+Model 3 Shrinkage:
+
+```{r, echo=FALSE}
+set.seed(84732)
+COMPANY_chains <- model_3 %>%
+  spread_draws(`(Intercept)`, b[,COMPANY]) %>%
+  mutate(mu_j = `(Intercept)` + b)
+COMPANY_summary_scaled <- COMPANY_chains %>%
+  select(-`(Intercept)`, -b) %>%
+  mean_qi(.width = 0.80) %>%
+  mutate(COMPANY = fct_reorder(COMPANY, mu_j))
+```
+
+```{r}
+ggplot(
+    sample_n(COMPANY_summary_scaled,70),
+    aes(x = COMPANY, y = mu_j, ymin = .lower, ymax = .upper)) +
+    geom_pointrange() +
+    geom_hline(yintercept = mean(data$Earnings_next_year_Scaled), linetype = "dashed") + 
+  xaxis_text(angle = 90, hjust = 1)
+```
+
+
+**Global Standard Deviation Parameters**
+
+```{r}
+tidy(model_2, effects = "ran_pars")
+(0.4512^2)/((0.4512^2) + (0.5519447^2))
+
+tidy(model_3, effects = "ran_pars")
+(0.4294^2)/((0.4294^2) + (0.5450631)^2)
+```
+
+In model 2, about 40.06% of the variance can be explained between companies. In model 3, about 38.29% of the variance can be explained between companies. This means that when including sectors and lagged variables, more variable shrinkage occurred. Unfortunately this shrinkage is not as evident in the plotted graphs above. Model 3's baseline intercepts differ among each other slightly less than model 2's. 
+
+
+
+# Bayes Forecast
+
+
+
+
 
