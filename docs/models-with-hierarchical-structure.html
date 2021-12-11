@@ -184,7 +184,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.3.2" data-path="models-with-hierarchical-structure.html"><a href="models-with-hierarchical-structure.html#how-accurate-are-the-models"><i class="fa fa-check"></i><b>4.3.2</b> How Accurate are the models?</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>5</b> Bayes Forecast</a></li>
+<li class="chapter" data-level="5" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>5</b> Bayes Forecast</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayes-forecast.html"><a href="bayes-forecast.html#model-parameters"><i class="fa fa-check"></i><b>5.1</b> Model Parameters</a></li>
+<li class="chapter" data-level="5.2" data-path="bayes-forecast.html"><a href="bayes-forecast.html#model-1-1"><i class="fa fa-check"></i><b>5.2</b> Model 1</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>6</b> Final Model</a></li>
 <li class="chapter" data-level="7" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>7</b> Reflection</a>
 <ul>
@@ -354,7 +358,7 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 <p><img src="series_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="models-with-hierarchical-structure.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mcmc_areas(predict_next_year, prob = 0.8) +</span></span>
 <span id="cb25-2"><a href="models-with-hierarchical-structure.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span></code></pre></div>
-<p>The predictions for the model_3 seem to be slightly better as more posterior predictive points are near the actual value for “2020”</p>
+<p>The predictions for the model_3 seem to be slightly better as more posterior predictive points are near the actual value for “2020”.</p>
 <p><strong>Evaluating Metrics</strong></p>
 <p>Model 2:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="models-with-hierarchical-structure.html#cb26-1" aria-hidden="true" tabindex="-1"></a>model_2_metrics</span></code></pre></div>

@@ -25,6 +25,8 @@ model-evaluations
 is-this-the-right-model
 how-accurate-are-the-models
 bayes-forecast
+model-parameters
+model-1-1
 finalmodel
 reflection
 next-steps
