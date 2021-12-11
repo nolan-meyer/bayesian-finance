@@ -6,6 +6,7 @@ bookdown::gitbook:
   includes:
   config:
     toc:
+      collapse: section
       before: |
         <li><a href="./">STAT 454 Capstone</a></li>
 
