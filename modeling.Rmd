@@ -215,3 +215,64 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 \sigma_0  & \sim \text{Exp}(1) \\
 \end{split}$$
 
+
+## Model 3
+
+### Model Structure
+
+In addition to having a hierarchical regression with one predictor, we fit another model using 3 years of lagged data as well as a sector dummy variable. We do this because earnings current year seemed to have a differential effect on earnings next year dependent on the company's sector. Again, we fit two different models. 
+
+```{r}
+model_3 <- readRDS("model_complex_with_hiar_nick.rds")
+model_3_train <- readRDS("model_complex_with_hiar_train_nick.rds")
+```
+
+```{r, eval=FALSE}
+model_complex_with_hiar_data <- data_elimatedO %>% 
+  select(c("Earnings_next_year_Scaled","EARNINGS_Scaled","EARNINGS_1_YEAR_AGO","EARNINGS_2_YEAR_AGO","EARNINGS_3_YEAR_AGO","COMPANY","Sector")) %>% 
+  na.omit()
+
+model_complex_with_hiar <- stan_glmer(
+  Earnings_next_year_Scaled ~ EARNINGS_Scaled + EARNINGS_1_YEAR_AGO + EARNINGS_2_YEAR_AGO + EARNINGS_3_YEAR_AGO +  (1 | COMPANY) + Sector, data = model_complex_with_hiar_data, 
+  family = gaussian,
+  chains = 4, iter = 5000*2, seed = 84735, 
+  prior_PD = FALSE, refresh = 0)
+
+
+model_complex_with_hiar_data_train <- training %>% 
+  select(c("Earnings_next_year_Scaled","EARNINGS_Scaled","EARNINGS_1_YEAR_AGO","EARNINGS_2_YEAR_AGO","EARNINGS_3_YEAR_AGO","COMPANY","Sector")) %>% 
+  na.omit()
+
+model_complex_with_hiar_train <- stan_glmer(
+  Earnings_next_year_Scaled ~ EARNINGS_Scaled + EARNINGS_1_YEAR_AGO + EARNINGS_2_YEAR_AGO + EARNINGS_3_YEAR_AGO +  (1 | COMPANY) + Sector, data = model_complex_with_hiar_data_train, 
+  family = gaussian,
+  chains = 4, iter = 5000*2, seed = 84735, 
+  prior_PD = FALSE)
+```
+
+```{r, eval=FALSE}
+prior_summary(model_3)
+```
+
+Model 3 Notation: 
+
+$$\begin{split}
+\text{Relationship within company:} & \\
+Y_{ij} | \beta_{0j}, \beta_1, \sigma_y 
+& \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \mu_{ij} = \beta_{0j} + \beta_1 X_{ij} + \beta_2 X_{ij} + \beta_2 X_{ij}...\\
+& \\
+\text{Variability between companies:} & \\
+\beta_{0j} & \stackrel{ind}{\sim} N(\beta_0, \sigma_0^2) \\
+& \\
+\text{Prior information on Globals with Adjusted Prior} & \\
+\beta_{0c} & \sim N(0.72, 2^2) \\
+\beta_1 & \sim N(0, 1.63^2) \\
+\beta_2 & \sim N(0, 1.63^2) \\
+\beta_3 & \sim N(0, 1.57^2) \\
+.\\
+.\\
+.\\
+\sigma_y  & \sim \text{Exp}(1.2) \\
+\sigma_0  & \sim \text{Exp}(1) \\
+\end{split}$$
+

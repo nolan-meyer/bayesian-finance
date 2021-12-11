@@ -18,6 +18,8 @@ model-structure-1
 model-evaluation-1
 model-2
 model-structure-2
+model-3
+model-structure-3
 finalmodel
 reflection
 next-steps
