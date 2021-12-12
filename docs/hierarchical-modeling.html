@@ -156,11 +156,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html"><i class="fa fa-check"></i><b>3</b> Hierarchical Modeling</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#set-up"><i class="fa fa-check"></i><b>3.1</b> Set Up</a></li>
-<li class="chapter" data-level="3.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-2"><i class="fa fa-check"></i><b>3.2</b> Model 2</a>
+<li class="chapter" data-level="3.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-1"><i class="fa fa-check"></i><b>3.2</b> Model 1</a>
 <ul>
 <li class="chapter" data-level="3.2.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-structure"><i class="fa fa-check"></i><b>3.2.1</b> Model Structure</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-3"><i class="fa fa-check"></i><b>3.3</b> Model 3</a>
+<li class="chapter" data-level="3.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-2"><i class="fa fa-check"></i><b>3.3</b> Model 2</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-structure-1"><i class="fa fa-check"></i><b>3.3.1</b> Model Structure</a></li>
 </ul></li>
@@ -211,97 +211,95 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-4"><a href="hierarchical-modeling.html#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="hierarchical-modeling.html#cb8-5" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(data_elimatedO, testing)</span></code></pre></div>
 </div>
-<div id="model-2" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Model 2</h2>
+<div id="model-1" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Model 1</h2>
 <div id="model-structure" class="section level3" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Model Structure</h3>
-<p>Now, we will move on to utilizing the structure of our data, where we have consecutive observations for each company for several years. Note: we fit each model twice, one using all data and another using training data (for evaluation purposes).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="hierarchical-modeling.html#cb9-1" aria-hidden="true" tabindex="-1"></a>model_2 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">&quot;model_2_Heirc_1yr_no_o_nick.rds&quot;</span>)</span>
-<span id="cb9-2"><a href="hierarchical-modeling.html#cb9-2" aria-hidden="true" tabindex="-1"></a>model_2_train <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;model_2_Heirc_1yr_no_o_train_nick.rds&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="hierarchical-modeling.html#cb10-1" aria-hidden="true" tabindex="-1"></a>model_2_Heirc_1yr_data <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="hierarchical-modeling.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="hierarchical-modeling.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb10-4"><a href="hierarchical-modeling.html#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="hierarchical-modeling.html#cb10-5" aria-hidden="true" tabindex="-1"></a>model_2_Heirc_1yr_no_o <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
-<span id="cb10-6"><a href="hierarchical-modeling.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> COMPANY), <span class="at">data =</span> model_2_Heirc_1yr_data, </span>
-<span id="cb10-7"><a href="hierarchical-modeling.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
-<span id="cb10-8"><a href="hierarchical-modeling.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
-<span id="cb10-9"><a href="hierarchical-modeling.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb10-10"><a href="hierarchical-modeling.html#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="hierarchical-modeling.html#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="hierarchical-modeling.html#cb10-12" aria-hidden="true" tabindex="-1"></a>model_2_Heirc_1yr_training_data <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb10-13"><a href="hierarchical-modeling.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb10-14"><a href="hierarchical-modeling.html#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="hierarchical-modeling.html#cb10-15" aria-hidden="true" tabindex="-1"></a>model_2_Heirc_1yr_no_o_train <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
-<span id="cb10-16"><a href="hierarchical-modeling.html#cb10-16" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> COMPANY), <span class="at">data =</span> model_2_Heirc_1yr_training_data, </span>
-<span id="cb10-17"><a href="hierarchical-modeling.html#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
-<span id="cb10-18"><a href="hierarchical-modeling.html#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
-<span id="cb10-19"><a href="hierarchical-modeling.html#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="hierarchical-modeling.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(model_2)</span></code></pre></div>
-<p>Below is the notation for our model 2:</p>
+<p>Now, we will move on to utilizing the structure of our data, where we have consecutive observations for each company for several years. We start with a model with varying intercepts. Note: we fit each model using training data for evaluation purposes.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="hierarchical-modeling.html#cb9-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_train <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;Diff_inter_train_nick.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="hierarchical-modeling.html#cb10-1" aria-hidden="true" tabindex="-1"></a>model_diff_inter_train_data <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="hierarchical-modeling.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_1_YEAR_AGO&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>,<span class="st">&quot;Sector&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span>
+<span id="cb10-3"><a href="hierarchical-modeling.html#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="hierarchical-modeling.html#cb10-4" aria-hidden="true" tabindex="-1"></a>model_diff_inter_train <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
+<span id="cb10-5"><a href="hierarchical-modeling.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> EARNINGS_1_YEAR_AGO  <span class="sc">+</span> Sector <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> COMPANY) , <span class="at">data =</span> model_diff_inter_train_data, </span>
+<span id="cb10-6"><a href="hierarchical-modeling.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb10-7"><a href="hierarchical-modeling.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
+<span id="cb10-8"><a href="hierarchical-modeling.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb10-9"><a href="hierarchical-modeling.html#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="hierarchical-modeling.html#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(model_diff_inter_train, <span class="st">&quot;Diff_Inter_train_nick.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="hierarchical-modeling.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(Diff_inter_train)</span></code></pre></div>
+<p>Below is the notation for model 1:</p>
 <p><span class="math display">\[\begin{split}
 \text{Relationship within company:} &amp; \\
 Y_{ij} | \beta_{0j}, \beta_1, \sigma_y 
-&amp; \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \mu_{ij} = \beta_{0j} + \beta_1 X_{ij} \\
+&amp; \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \mu_{ij} = \beta_{0j} + \beta_1 X_{ij} + \beta_2 X_{ij} + \beta_3 X_{ij}...\\
 &amp; \\
 \text{Variability between companies:} &amp; \\
 \beta_{0j} &amp; \stackrel{ind}{\sim} N(\beta_0, \sigma_0^2) \\
 &amp; \\
 \text{Prior information on Globals with Adjusted Prior} &amp; \\
-\beta_{0c} &amp; \sim N(0.68, 2^2) \\
-\beta_1 &amp; \sim N(0, 1.6^2) \\
-\sigma_y  &amp; \sim \text{Exp}(1.3) \\
+\beta_{0c} &amp; \sim N(0.59, 1.5^2) \\
+\beta_1 &amp; \sim N(0, 1.74^2) \\
+\beta_2 &amp; \sim N(0, 1.60^2) \\
+\beta_3 &amp; \sim N(0, 4.60^2) \\
+.\\
+.\\
+.\\
+\sigma_y  &amp; \sim \text{Exp}(1.6) \\
 \sigma_0  &amp; \sim \text{Exp}(1) \\
 \end{split}\]</span></p>
 </div>
 </div>
-<div id="model-3" class="section level2" number="3.3">
-<h2><span class="header-section-number">3.3</span> Model 3</h2>
+<div id="model-2" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Model 2</h2>
 <div id="model-structure-1" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Model Structure</h3>
-<p>In addition to having a hierarchical regression with one predictor, we fit another model using 3 years of lagged data as well as a sector dummy variable. We do this because earnings current year seemed to have a differential effect on earnings next year dependent on the company’s sector. Again, we fit two different models.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="hierarchical-modeling.html#cb12-1" aria-hidden="true" tabindex="-1"></a>model_3 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;model_complex_with_hiar_nick.rds&quot;</span>)</span>
-<span id="cb12-2"><a href="hierarchical-modeling.html#cb12-2" aria-hidden="true" tabindex="-1"></a>model_3_train <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;model_complex_with_hiar_train_nick.rds&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="hierarchical-modeling.html#cb13-1" aria-hidden="true" tabindex="-1"></a>model_complex_with_hiar_data <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="hierarchical-modeling.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_1_YEAR_AGO&quot;</span>,<span class="st">&quot;EARNINGS_2_YEAR_AGO&quot;</span>,<span class="st">&quot;EARNINGS_3_YEAR_AGO&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>,<span class="st">&quot;Sector&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-3"><a href="hierarchical-modeling.html#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb13-4"><a href="hierarchical-modeling.html#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="hierarchical-modeling.html#cb13-5" aria-hidden="true" tabindex="-1"></a>model_complex_with_hiar <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
-<span id="cb13-6"><a href="hierarchical-modeling.html#cb13-6" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> EARNINGS_1_YEAR_AGO <span class="sc">+</span> EARNINGS_2_YEAR_AGO <span class="sc">+</span> EARNINGS_3_YEAR_AGO <span class="sc">+</span>  (<span class="dv">1</span> <span class="sc">|</span> COMPANY) <span class="sc">+</span> Sector, <span class="at">data =</span> model_complex_with_hiar_data, </span>
-<span id="cb13-7"><a href="hierarchical-modeling.html#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
-<span id="cb13-8"><a href="hierarchical-modeling.html#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
-<span id="cb13-9"><a href="hierarchical-modeling.html#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb13-10"><a href="hierarchical-modeling.html#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="hierarchical-modeling.html#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="hierarchical-modeling.html#cb13-12" aria-hidden="true" tabindex="-1"></a>model_complex_with_hiar_data_train <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span> </span>
-<span id="cb13-13"><a href="hierarchical-modeling.html#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_1_YEAR_AGO&quot;</span>,<span class="st">&quot;EARNINGS_2_YEAR_AGO&quot;</span>,<span class="st">&quot;EARNINGS_3_YEAR_AGO&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>,<span class="st">&quot;Sector&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-14"><a href="hierarchical-modeling.html#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb13-15"><a href="hierarchical-modeling.html#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="hierarchical-modeling.html#cb13-16" aria-hidden="true" tabindex="-1"></a>model_complex_with_hiar_train <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
-<span id="cb13-17"><a href="hierarchical-modeling.html#cb13-17" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> EARNINGS_1_YEAR_AGO <span class="sc">+</span> EARNINGS_2_YEAR_AGO <span class="sc">+</span> EARNINGS_3_YEAR_AGO <span class="sc">+</span>  (<span class="dv">1</span> <span class="sc">|</span> COMPANY) <span class="sc">+</span> Sector, <span class="at">data =</span> model_complex_with_hiar_data_train, </span>
-<span id="cb13-18"><a href="hierarchical-modeling.html#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
-<span id="cb13-19"><a href="hierarchical-modeling.html#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
-<span id="cb13-20"><a href="hierarchical-modeling.html#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="hierarchical-modeling.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(model_3)</span></code></pre></div>
-<p>Model 3 Notation:</p>
+<p>In addition to having a hierarchical regression with different intercepts, we decided to add a model with different intercepts and slopes.</p>
+<p><strong>Rational behind different slopes:</strong></p>
+<p>Below we graph 4 random companies, we can see that earnings in the current year impacts earnings next year differently among different companies.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="hierarchical-modeling.html#cb12-1" aria-hidden="true" tabindex="-1"></a>eliminated <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="hierarchical-modeling.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AAL&quot;</span>,<span class="st">&quot;CVS&quot;</span>,<span class="st">&quot;DAL&quot;</span>,<span class="st">&quot;WAB&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="hierarchical-modeling.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> EARNINGS_Scaled, <span class="at">y =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
+<span id="cb12-4"><a href="hierarchical-modeling.html#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb12-5"><a href="hierarchical-modeling.html#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb12-6"><a href="hierarchical-modeling.html#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span> COMPANY)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>To get a better idea of the varying slopes, I graph 50 random companies together.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="hierarchical-modeling.html#cb13-1" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> eliminated<span class="sc">$</span>COMPANY</span>
+<span id="cb13-2"><a href="hierarchical-modeling.html#cb13-2" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(<span class="fu">as.data.frame</span>(vector), <span class="dv">50</span>)</span>
+<span id="cb13-3"><a href="hierarchical-modeling.html#cb13-3" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> <span class="fu">as.list</span>(vector)</span>
+<span id="cb13-4"><a href="hierarchical-modeling.html#cb13-4" aria-hidden="true" tabindex="-1"></a>eliminated <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="hierarchical-modeling.html#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">%in%</span> vector<span class="sc">$</span>vector) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="hierarchical-modeling.html#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled, <span class="at">group =</span> COMPANY))<span class="sc">+</span></span>
+<span id="cb13-7"><a href="hierarchical-modeling.html#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se=</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>We believe it makes sense to replace the global earnings coefficientwith a company specific earnings coefficient.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="hierarchical-modeling.html#cb14-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_train <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;Diff_inter_slope_train_nick.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="hierarchical-modeling.html#cb15-1" aria-hidden="true" tabindex="-1"></a>model_diff_inter_slope_train_data <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="hierarchical-modeling.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;Sector&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_1_YEAR_AGO&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="hierarchical-modeling.html#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb15-4"><a href="hierarchical-modeling.html#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="hierarchical-modeling.html#cb15-5" aria-hidden="true" tabindex="-1"></a>diff_slope_inter_model_train <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(</span>
+<span id="cb15-6"><a href="hierarchical-modeling.html#cb15-6" aria-hidden="true" tabindex="-1"></a>  Earnings_next_year_Scaled <span class="sc">~</span> EARNINGS_Scaled <span class="sc">+</span> EARNINGS_1_YEAR_AGO <span class="sc">+</span> (EARNINGS_Scaled <span class="sc">|</span> COMPANY) <span class="sc">+</span> Sector, <span class="at">data =</span> model_diff_inter_slope_train_data, </span>
+<span id="cb15-7"><a href="hierarchical-modeling.html#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb15-8"><a href="hierarchical-modeling.html#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span><span class="sc">*</span><span class="dv">2</span>, <span class="at">seed =</span> <span class="dv">84735</span>, </span>
+<span id="cb15-9"><a href="hierarchical-modeling.html#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-10"><a href="hierarchical-modeling.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(diff_slope_inter_model_train, <span class="st">&quot;Diff_inter_slope_train_nick.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="hierarchical-modeling.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(Diff_inter_slope_train)</span></code></pre></div>
+<p>Model 2 Notation:</p>
 <p><span class="math display">\[\begin{split}
-\text{Relationship within company:} &amp; \\
-Y_{ij} | \beta_{0j}, \beta_1, \sigma_y 
-&amp; \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \mu_{ij} = \beta_{0j} + \beta_1 X_{ij} + \beta_2 X_{ij} + \beta_2 X_{ij}...\\
+Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \; \mu_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + \beta_{2} X_{ij}  + \beta_{3} X_{ij}...\\
 &amp; \\
-\text{Variability between companies:} &amp; \\
-\beta_{0j} &amp; \stackrel{ind}{\sim} N(\beta_0, \sigma_0^2) \\
+\beta_{0j} &amp; \sim N(\beta_0, \sigma_0^2) \\
+\beta_{1j} &amp; \sim N(\beta_1, \sigma_1^2) \\
 &amp; \\
-\text{Prior information on Globals with Adjusted Prior} &amp; \\
-\beta_{0c} &amp; \sim N(0.72, 2^2) \\
-\beta_1 &amp; \sim N(0, 1.63^2) \\
-\beta_2 &amp; \sim N(0, 1.63^2) \\
-\beta_3 &amp; \sim N(0, 1.57^2) \\
+\beta_{0c} &amp; \sim N(0.59, 1.5^2)  \\
+\beta_1 &amp; \sim N(0, 1.74^2) \\
 .\\
 .\\
 .\\
-\sigma_y  &amp; \sim \text{Exp}(1.2) \\
-\sigma_0  &amp; \sim \text{Exp}(1) \\
+\sigma_y &amp; \sim \text{Exp}(1.6)    \\
+\sigma_0, \sigma_1, ... &amp; \sim \text{(something a bit complicated)}. \\
 \end{split}\]</span></p>
 </div>
 </div>
@@ -310,95 +308,62 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 <div id="is-this-the-right-model" class="section level3" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Is this the right model?</h3>
 <p>Next we plot the posterior distributions and compare to the actual values observed in the data set.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="hierarchical-modeling.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(model_2) </span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="hierarchical-modeling.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(model_3)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-25-2.png" width="672" /></p>
-<p>Again, several company earnings’s on the right seem to be causing model fitness difficulties. Both models run into this problem.</p>
-<p>There seems to be no difference between model 2 and 3 in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="hierarchical-modeling.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_train) </span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="hierarchical-modeling.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_slope_train)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
+<p>Again, several company earnings’ on the right seem to be causing model fitness difficulties. Both models run into this problem.</p>
+<p>There seems to be little difference between the two models in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models.</p>
 </div>
 <div id="how-accurate-are-the-models" class="section level3" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> How Accurate are the models?</h3>
-<p><strong>Model 2 - Specific Examples with companies:</strong></p>
+<p><strong>Model 1 - Specific Examples with companies:</strong></p>
 <p>Below, we compare our predictions for American Airlines. We plot 750 random values predicted from our predictions (out of 20,000). As we can see below our predictions range cover the actual value of earnings for 2020 fiscal year for both models.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="hierarchical-modeling.html#cb17-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="hierarchical-modeling.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> test_comp) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="hierarchical-modeling.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">&lt;=</span> most_recent_year<span class="sc">+</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-4"><a href="hierarchical-modeling.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> YEAR, <span class="at">y=</span>EARNINGS_Scaled))<span class="sc">+</span></span>
-<span id="cb17-5"><a href="hierarchical-modeling.html#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb17-6"><a href="hierarchical-modeling.html#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb17-7"><a href="hierarchical-modeling.html#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> graphing_predictions, <span class="fu">aes</span>(<span class="at">x =</span> most_recent_year, </span>
-<span id="cb17-8"><a href="hierarchical-modeling.html#cb17-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">xend =</span> most_recent_year<span class="sc">+</span><span class="dv">1</span>,</span>
-<span id="cb17-9"><a href="hierarchical-modeling.html#cb17-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> actual, </span>
-<span id="cb17-10"><a href="hierarchical-modeling.html#cb17-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">yend =</span> EARNINGS_Scaled),</span>
-<span id="cb17-11"><a href="hierarchical-modeling.html#cb17-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.03</span>,</span>
-<span id="cb17-12"><a href="hierarchical-modeling.html#cb17-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="hierarchical-modeling.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mcmc_areas(predict_next_year, prob = 0.8) +</span></span>
-<span id="cb18-2"><a href="hierarchical-modeling.html#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span>
-<span id="cb18-3"><a href="hierarchical-modeling.html#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Need Help Because X scale is different</span></span></code></pre></div>
-<p><strong>Model 3 - Specific Examples with companies:</strong></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="hierarchical-modeling.html#cb19-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="hierarchical-modeling.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> test_comp) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="hierarchical-modeling.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">&lt;=</span> most_recent_year) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-4"><a href="hierarchical-modeling.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> YEAR, <span class="at">y=</span>EARNINGS_Scaled))<span class="sc">+</span></span>
-<span id="cb19-5"><a href="hierarchical-modeling.html#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb19-6"><a href="hierarchical-modeling.html#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb19-7"><a href="hierarchical-modeling.html#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> graphing_predictions, <span class="fu">aes</span>(<span class="at">x =</span> most_recent_year <span class="sc">-</span> <span class="dv">1</span>, </span>
-<span id="cb19-8"><a href="hierarchical-modeling.html#cb19-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">xend =</span> most_recent_year,</span>
-<span id="cb19-9"><a href="hierarchical-modeling.html#cb19-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> actual, </span>
-<span id="cb19-10"><a href="hierarchical-modeling.html#cb19-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">yend =</span> EARNINGS_Scaled),</span>
-<span id="cb19-11"><a href="hierarchical-modeling.html#cb19-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.03</span>,</span>
-<span id="cb19-12"><a href="hierarchical-modeling.html#cb19-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="hierarchical-modeling.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
+<span id="cb19-2"><a href="hierarchical-modeling.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">predict_model</span>(<span class="st">&quot;AAL&quot;</span>, Diff_inter_train)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="hierarchical-modeling.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mcmc_areas(predict_next_year, prob = 0.8) +</span></span>
-<span id="cb20-2"><a href="hierarchical-modeling.html#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span></code></pre></div>
-<p>The predictions for the model_3 seem to be slightly better as more posterior predictive points are near the actual value for “2020”.</p>
+<span id="cb20-2"><a href="hierarchical-modeling.html#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span>
+<span id="cb20-3"><a href="hierarchical-modeling.html#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Need Help Because X scale is different</span></span></code></pre></div>
+<p><strong>Model 2 - Specific Examples with companies:</strong></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="hierarchical-modeling.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
+<span id="cb21-2"><a href="hierarchical-modeling.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">predict_model</span>(<span class="st">&quot;AAL&quot;</span>, Diff_inter_slope_train)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="hierarchical-modeling.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mcmc_areas(predict_next_year, prob = 0.8) +</span></span>
+<span id="cb22-2"><a href="hierarchical-modeling.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span></code></pre></div>
+<p>The predictions for the second model seem to be slightly better as more posterior predictive points are near the actual value for “2020”.</p>
+<p><strong>Model 1 - Metrics</strong></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="hierarchical-modeling.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
+<span id="cb23-2"><a href="hierarchical-modeling.html#cb23-2" aria-hidden="true" tabindex="-1"></a>testing_1 <span class="ot">&lt;-</span> testing <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="hierarchical-modeling.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb23-4"><a href="hierarchical-modeling.html#cb23-4" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics_pred</span>(Diff_inter_train, testing_1)</span></code></pre></div>
+<p><strong>Model 2 - Metrics</strong></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="hierarchical-modeling.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
+<span id="cb24-2"><a href="hierarchical-modeling.html#cb24-2" aria-hidden="true" tabindex="-1"></a>testing_1 <span class="ot">&lt;-</span> testing <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="hierarchical-modeling.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb24-4"><a href="hierarchical-modeling.html#cb24-4" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics_pred</span>(Diff_inter_slope_train, testing_1)</span></code></pre></div>
 <p><strong>Evaluating Metrics</strong></p>
+<p>Model 1:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="hierarchical-modeling.html#cb25-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics</span></code></pre></div>
+<pre><code>##         MAE  Within95  Within50
+## 1 0.3620034 0.7543103 0.4181034</code></pre>
 <p>Model 2:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="hierarchical-modeling.html#cb21-1" aria-hidden="true" tabindex="-1"></a>model_2_metrics</span></code></pre></div>
-<pre><code>##        MAE  Within95  Within50
-## 1 0.368009 0.8275154 0.4887064</code></pre>
-<p>Model 3:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="hierarchical-modeling.html#cb23-1" aria-hidden="true" tabindex="-1"></a>model_3_metrics</span></code></pre></div>
-<pre><code>##        MAE  Within95  Within50
-## 1 0.337252 0.8362069 0.5258621</code></pre>
-<p>We can see that our model 3 preforms slightly better. Where our average median posterior prediction is off by .3697147 billion as opposed to model 2’s .40 billion. Furthermore, our 95% and 50% interval values are both slightly better than model 2’s.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics</span></code></pre></div>
+<pre><code>##         MAE  Within95  Within50
+## 1 0.2781092 0.7931034 0.4935345</code></pre>
+<p>We can see that our model with varying intercepts and slopes (model 2) preforms slightly better. Where our average median posterior prediction is off by 0.28 billion as opposed to 0.362 billion when we only have differing intercepts. Furthermore, our 95 and 50 interval values are both better in the model with different intercept and slope.</p>
 <p><strong>Shrinkage </strong></p>
 <p>Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models.</p>
-<p>Model 2 Shrinkage:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="hierarchical-modeling.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb25-2"><a href="hierarchical-modeling.html#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(COMPANY_summary_scaled,<span class="dv">70</span>),</span>
-<span id="cb25-3"><a href="hierarchical-modeling.html#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> COMPANY, <span class="at">y =</span> mu_j, <span class="at">ymin =</span> .lower, <span class="at">ymax =</span> .upper)) <span class="sc">+</span></span>
-<span id="cb25-4"><a href="hierarchical-modeling.html#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
-<span id="cb25-5"><a href="hierarchical-modeling.html#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(data<span class="sc">$</span>Earnings_next_year_Scaled), <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb25-6"><a href="hierarchical-modeling.html#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xaxis_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p>Model 1 Shrinkage:</p>
+<p><img src="series_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 <p>Model 3 Shrinkage:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="hierarchical-modeling.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb26-2"><a href="hierarchical-modeling.html#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(COMPANY_summary_scaled,<span class="dv">70</span>),</span>
-<span id="cb26-3"><a href="hierarchical-modeling.html#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> COMPANY, <span class="at">y =</span> mu_j, <span class="at">ymin =</span> .lower, <span class="at">ymax =</span> .upper)) <span class="sc">+</span></span>
-<span id="cb26-4"><a href="hierarchical-modeling.html#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
-<span id="cb26-5"><a href="hierarchical-modeling.html#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(data<span class="sc">$</span>Earnings_next_year_Scaled), <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb26-6"><a href="hierarchical-modeling.html#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xaxis_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
-<p><strong>Global Standard Deviation Parameters</strong></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 3
-##   term                    group    estimate
-##   &lt;chr&gt;                   &lt;chr&gt;       &lt;dbl&gt;
-## 1 sd_(Intercept).COMPANY  COMPANY     0.451
-## 2 sd_Observation.Residual Residual    0.552</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div>
-<pre><code>## [1] 0.4005739</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="hierarchical-modeling.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 3
-##   term                    group    estimate
-##   &lt;chr&gt;                   &lt;chr&gt;       &lt;dbl&gt;
-## 1 sd_(Intercept).COMPANY  COMPANY     0.429
-## 2 sd_Observation.Residual Residual    0.545</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="hierarchical-modeling.html#cb33-1" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## [1] 0.3829548</code></pre>
+<p><img src="series_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p><strong>Global Standard Deviation Parameters: NOT COMPLETED ADFASGARGERGEARG</strong></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb29-2"><a href="hierarchical-modeling.html#cb29-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb29-3"><a href="hierarchical-modeling.html#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="hierarchical-modeling.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb29-5"><a href="hierarchical-modeling.html#cb29-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <p>In model 2, about 40.06% of the variance can be explained between companies. In model 3, about 38.29% of the variance can be explained between companies. This means that when including sectors and lagged variables, more variable shrinkage occurred. Unfortunately this shrinkage is not as evident in the plotted graphs above. Model 3’s baseline intercepts differ among each other slightly less than model 2’s.</p>
 </div>
 </div>

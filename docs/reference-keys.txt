@@ -9,9 +9,9 @@ graphing-outliers
 initial-explorations
 hierarchical-modeling
 set-up
-model-2
+model-1
 model-structure
-model-3
+model-2
 model-structure-1
 model-evaluations
 is-this-the-right-model
