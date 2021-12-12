@@ -14,4 +14,6 @@ description: "Bayesian Statistics Capstone Project"
 
 ## Introduction
 
+Welcome to our STAT 454: Bayesian Statistics capstone project.
+
 Add intro here...(intro, motivations, outline of modeling approach)
