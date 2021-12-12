@@ -205,7 +205,7 @@ return(model_2_metrics)
 
 
 
-## Model 1
+## Model 1: Hierarchical w/ Different Intercepts
 
 ### Model Structure
 
@@ -232,7 +232,7 @@ write_rds(model_diff_inter_train, "Diff_Inter_train_nick.rds")
 prior_summary(Diff_inter_train)
 ```
 
-Below is the notation for model 1:
+Below is the notation for the differing intercepts model:
 
 $$\begin{split}
 \text{Relationship within company:} & \\
@@ -255,7 +255,8 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 \end{split}$$
 
 
-## Model 2
+
+## Model 2: Hierarchical w/ Different Slopes and Intercepts
 
 ### Model Structure
 
@@ -310,7 +311,7 @@ write_rds(diff_slope_inter_model_train, "Diff_inter_slope_train_nick.rds")
 prior_summary(Diff_inter_slope_train)
 ```
 
-Model 2 Notation: 
+Different intercepts & slopes model notation: 
 
 $$\begin{split}
 Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y & \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \; \mu_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + \beta_{2} X_{ij}  + \beta_{3} X_{ij}...\\
@@ -373,9 +374,7 @@ predict_model("AAL", Diff_inter_slope_train)
 The predictions for the second model seem to be slightly better as more posterior predictive points are near the actual value for "2020".
 
 
-**Model 1 - Metrics**
-
-```{r}
+```{r, include=FALSE}
 set.seed(84732)
 testing_1 <- testing %>% 
   na.omit()
@@ -383,9 +382,7 @@ Diff_inter_metrics <- collect_metrics_pred(Diff_inter_train, testing_1)
 ```
 
 
-**Model 2 - Metrics**
-
-```{r}
+```{r, include=FALSE}
 set.seed(84732)
 testing_1 <- testing %>%
   na.omit()
@@ -395,13 +392,13 @@ Diff_inter_slope_metrics <- collect_metrics_pred(Diff_inter_slope_train, testing
 
 **Evaluating Metrics**
 
-Model 1:
+Different Intercepts Model:
 
 ```{r}
 Diff_inter_metrics
 ```
 
-Model 2:
+Different Intercepts & Slopes Model:
 
 ```{r}
 Diff_inter_slope_metrics
@@ -434,7 +431,7 @@ ggplot(
 ```
 
 
-Model 3 Shrinkage:
+Model 2 Shrinkage:
 
 ```{r, echo=FALSE}
 set.seed(84732)

@@ -156,11 +156,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html"><i class="fa fa-check"></i><b>3</b> Hierarchical Modeling</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#set-up"><i class="fa fa-check"></i><b>3.1</b> Set Up</a></li>
-<li class="chapter" data-level="3.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-1"><i class="fa fa-check"></i><b>3.2</b> Model 1</a>
+<li class="chapter" data-level="3.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-1-hierarchical-w-different-intercepts"><i class="fa fa-check"></i><b>3.2</b> Model 1: Hierarchical w/ Different Intercepts</a>
 <ul>
 <li class="chapter" data-level="3.2.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-structure"><i class="fa fa-check"></i><b>3.2.1</b> Model Structure</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-2"><i class="fa fa-check"></i><b>3.3</b> Model 2</a>
+<li class="chapter" data-level="3.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-2-hierarchical-w-different-slopes-and-intercepts"><i class="fa fa-check"></i><b>3.3</b> Model 2: Hierarchical w/ Different Slopes and Intercepts</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#model-structure-1"><i class="fa fa-check"></i><b>3.3.1</b> Model Structure</a></li>
 </ul></li>
@@ -211,8 +211,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-4"><a href="hierarchical-modeling.html#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="hierarchical-modeling.html#cb8-5" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(data_elimatedO, testing)</span></code></pre></div>
 </div>
-<div id="model-1" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Model 1</h2>
+<div id="model-1-hierarchical-w-different-intercepts" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Model 1: Hierarchical w/ Different Intercepts</h2>
 <div id="model-structure" class="section level3" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Model Structure</h3>
 <p>Now, we will move on to utilizing the structure of our data, where we have consecutive observations for each company for several years. We start with a model with varying intercepts. Note: we fit each model using training data for evaluation purposes.</p>
@@ -228,7 +228,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-9"><a href="hierarchical-modeling.html#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="hierarchical-modeling.html#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(model_diff_inter_train, <span class="st">&quot;Diff_Inter_train_nick.rds&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="hierarchical-modeling.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(Diff_inter_train)</span></code></pre></div>
-<p>Below is the notation for model 1:</p>
+<p>Below is the notation for the differing intercepts model:</p>
 <p><span class="math display">\[\begin{split}
 \text{Relationship within company:} &amp; \\
 Y_{ij} | \beta_{0j}, \beta_1, \sigma_y 
@@ -250,8 +250,8 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 \end{split}\]</span></p>
 </div>
 </div>
-<div id="model-2" class="section level2" number="3.3">
-<h2><span class="header-section-number">3.3</span> Model 2</h2>
+<div id="model-2-hierarchical-w-different-slopes-and-intercepts" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Model 2: Hierarchical w/ Different Slopes and Intercepts</h2>
 <div id="model-structure-1" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Model Structure</h3>
 <p>In addition to having a hierarchical regression with different intercepts, we decided to add a model with different intercepts and slopes.</p>
@@ -286,7 +286,7 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 <span id="cb15-9"><a href="hierarchical-modeling.html#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior_PD =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb15-10"><a href="hierarchical-modeling.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(diff_slope_inter_model_train, <span class="st">&quot;Diff_inter_slope_train_nick.rds&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="hierarchical-modeling.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(Diff_inter_slope_train)</span></code></pre></div>
-<p>Model 2 Notation:</p>
+<p>Different intercepts &amp; slopes model notation:</p>
 <p><span class="math display">\[\begin{split}
 Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \; \mu_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + \beta_{2} X_{ij}  + \beta_{3} X_{ij}...\\
 &amp; \\
@@ -332,23 +332,13 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="hierarchical-modeling.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mcmc_areas(predict_next_year, prob = 0.8) +</span></span>
 <span id="cb22-2"><a href="hierarchical-modeling.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span></code></pre></div>
 <p>The predictions for the second model seem to be slightly better as more posterior predictive points are near the actual value for “2020”.</p>
-<p><strong>Model 1 - Metrics</strong></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="hierarchical-modeling.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
-<span id="cb23-2"><a href="hierarchical-modeling.html#cb23-2" aria-hidden="true" tabindex="-1"></a>testing_1 <span class="ot">&lt;-</span> testing <span class="sc">%&gt;%</span> </span>
-<span id="cb23-3"><a href="hierarchical-modeling.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb23-4"><a href="hierarchical-modeling.html#cb23-4" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics_pred</span>(Diff_inter_train, testing_1)</span></code></pre></div>
-<p><strong>Model 2 - Metrics</strong></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="hierarchical-modeling.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">84732</span>)</span>
-<span id="cb24-2"><a href="hierarchical-modeling.html#cb24-2" aria-hidden="true" tabindex="-1"></a>testing_1 <span class="ot">&lt;-</span> testing <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="hierarchical-modeling.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb24-4"><a href="hierarchical-modeling.html#cb24-4" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics_pred</span>(Diff_inter_slope_train, testing_1)</span></code></pre></div>
 <p><strong>Evaluating Metrics</strong></p>
-<p>Model 1:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="hierarchical-modeling.html#cb25-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics</span></code></pre></div>
+<p>Different Intercepts Model:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="hierarchical-modeling.html#cb23-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics</span></code></pre></div>
 <pre><code>##         MAE  Within95  Within50
 ## 1 0.3620034 0.7543103 0.4181034</code></pre>
-<p>Model 2:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics</span></code></pre></div>
+<p>Different Intercepts &amp; Slopes Model:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="hierarchical-modeling.html#cb25-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics</span></code></pre></div>
 <pre><code>##         MAE  Within95  Within50
 ## 1 0.2781092 0.7931034 0.4935345</code></pre>
 <p>We can see that our model with varying intercepts and slopes (model 2) preforms slightly better. Where our average median posterior prediction is off by 0.28 billion as opposed to 0.362 billion when we only have differing intercepts. Furthermore, our 95 and 50 interval values are both better in the model with different intercept and slope.</p>
@@ -356,14 +346,14 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <p>Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models.</p>
 <p>Model 1 Shrinkage:</p>
 <p><img src="series_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
-<p>Model 3 Shrinkage:</p>
+<p>Model 2 Shrinkage:</p>
 <p><img src="series_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 <p><strong>Global Standard Deviation Parameters: NOT COMPLETED ADFASGARGERGEARG</strong></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb29-2"><a href="hierarchical-modeling.html#cb29-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb29-3"><a href="hierarchical-modeling.html#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="hierarchical-modeling.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb29-5"><a href="hierarchical-modeling.html#cb29-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb27-2"><a href="hierarchical-modeling.html#cb27-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb27-3"><a href="hierarchical-modeling.html#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="hierarchical-modeling.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb27-5"><a href="hierarchical-modeling.html#cb27-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <p>In model 2, about 40.06% of the variance can be explained between companies. In model 3, about 38.29% of the variance can be explained between companies. This means that when including sectors and lagged variables, more variable shrinkage occurred. Unfortunately this shrinkage is not as evident in the plotted graphs above. Model 3’s baseline intercepts differ among each other slightly less than model 2’s.</p>
 </div>
 </div>
