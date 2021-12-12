@@ -14,14 +14,4 @@ description: "Bayesian Statistics Capstone Project"
 
 ## Introduction
 
-Add intro here...
-
-----
-
-We can add these line thingys lol
-
-----
-
-## Motivation
-
-Add motivations here...
+Add intro here...(intro, motivations, outline of modeling approach)

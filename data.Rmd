@@ -142,14 +142,14 @@ data %>% ggplot(aes(x = EARNINGS_Scaled, y= Earnings_next_year_Scaled))+
 
 There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.  
 
-We removed outliers by classifying them as one if they are 1.5*IQR (Interquartile Range)
+We removed outliers by classifying them as one if they are outside the range of +/- (0.9 * IQR) (Interquartile Range).
 
 ```{r}
 Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
 iqr <- IQR(data$Earnings_next_year_Scaled, na.rm = TRUE)
-up <-  Q[2]+1.5*iqr # Upper Range  
-low<- Q[1]-1.5*iqr # Lower Range
-eliminated<- subset(data, data$Earnings_next_year_Scaled > (Q[1] - 1.5*iqr) & data$Earnings_next_year_Scaled < (Q[2]+1.5*iqr))
+up <-  Q[2]+.90*iqr # Upper Range  
+low<- Q[1]-.90*iqr # Lower Range
+eliminated<- subset(data, data$Earnings_next_year_Scaled > (low) & data$Earnings_next_year_Scaled < (up))
 data_elimatedO <- eliminated
 ```
 

@@ -1,0 +1,160 @@
+# Models w/o hierarchical structure {#modeling}
+
+```{r, echo=FALSE}
+library(tidyverse)         # for reading in data, graphing, and cleaning
+library(tidymodels)        # for modeling ... tidily
+library(usemodels)         # for suggesting step_XXX() functions
+library(glmnet)            # for regularized regression, including LASSO
+library(naniar)            # for examining missing values (NAs)
+library(lubridate)         # for date  manipulation
+library(moderndive)        # for King County housing data
+library(vip)               # for variable importance plots
+library(rmarkdown)         # for paged tables
+library(dplyr)
+library(janitor)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(bayesforecast)    # Bayes Forecasting (Playing around) 
+library(bayesrules)
+library(tidyverse)
+library(rstanarm)
+library(broom.mixed)
+library(tidybayes)
+library(tidyverse)
+library(bayesplot)
+library(ggplot2)
+```
+
+```{r, echo=FALSE}
+data <- read.csv("FINALDATASET.csv")
+#Selecting necessary variables
+data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALES", "CASH", "Name", "Sector", "Earnings_next_year"))
+
+#Scaling Variables of Interest
+data <- data %>% 
+  mutate(EARNINGS_Scaled = EARNINGS/1000000000,
+         CASH_Scaled = CASH/1000000000,
+         MARKET.CAP_Scaled = MARKET.CAP/1000000000,
+         Earnings_next_year_Scaled = Earnings_next_year/1000000000,
+         SALES_Scaled = SALES/1000000000)
+
+#Adding Lagged Variables
+data <- data %>% 
+  group_by(COMPANY) %>%
+  mutate(EARNINGS_1_YEAR_AGO = lead(EARNINGS_Scaled, n = 1), 
+         EARNINGS_2_YEAR_AGO = lead(EARNINGS_Scaled, n = 2),
+         EARNINGS_3_YEAR_AGO = lead(EARNINGS_Scaled, n = 3),
+         EARNINGS_4_YEAR_AGO = lead(EARNINGS_Scaled, n = 4)) %>% 
+  mutate(SALES_1_YEAR_AGO = lead(SALES_Scaled, n = 1),
+         SALES_2_YEAR_AGO = lead(SALES_Scaled, n = 2),
+         SALES_3_YEAR_AGO = lead(SALES_Scaled, n = 3),
+         SALES_4_YEAR_AGO = lead(SALES_Scaled, n = 4))
+
+#Add_Dummy if Company is 100
+temp <- data %>% 
+  group_by(COMPANY) %>% 
+  summarize(count = n(), 
+            mean_MC = mean(MARKET.CAP)) %>% 
+  filter(count == 23) %>% 
+  arrange(desc(mean_MC)) %>% 
+  head(100)
+
+temp <- temp$COMPANY
+
+data <- data %>% 
+  mutate(Is_top_100 = case_when(COMPANY %in% temp ~ 1,TRUE ~ 0))
+```
+
+
+
+## Set Up
+
+Since we have time-series data, we create a testing set by subseting each company's 2nd to latest year. We will predict earnings's next year with the testing set and compare it with the actual values to help determine model accuracy.
+
+```{r, echo=FALSE}
+Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
+iqr <- IQR(data$Earnings_next_year_Scaled, na.rm = TRUE)
+up <-  Q[2]+1.5*iqr # Upper Range  
+low<- Q[1]-1.5*iqr # Lower Range
+eliminated<- subset(data, data$Earnings_next_year_Scaled > (Q[1] - 1.5*iqr) & data$Earnings_next_year_Scaled < (Q[2]+1.5*iqr))
+data_elimatedO <- eliminated
+```
+
+```{r}
+testing <- data_elimatedO %>% 
+   group_by(COMPANY) %>% 
+   filter(row_number()==1)
+
+training <- anti_join(data_elimatedO, testing)
+```
+
+## Model 1
+
+### Model Structure
+
+The first model is a regular simple normal regression, as we are not taking advantage of the grouped structure of our data (by company). We have a complete pooled regression here.
+
+```{r}
+model_1_no_data <- eliminated %>% 
+  select(c("Earnings_next_year_Scaled","EARNINGS_Scaled","Is_top_100")) %>% 
+  na.omit()
+
+model_1_no <- stan_glm(
+  Earnings_next_year_Scaled ~ EARNINGS_Scaled, data = model_1_no_data,
+  family = gaussian,
+  prior_PD = FALSE,
+  chains = 4, iter = 5000*2, seed = 84735, refresh = 0)
+```
+
+Below is our first model notation with adjusted priors:
+
+```{r, eval=FALSE}
+prior_summary(model_1_no)
+```
+
+$$\begin{split}
+Y_i | \beta_0, \beta_1, \sigma & \stackrel{ind}{\sim} N(\mu_i, \sigma^2) \;\; \text{ where } \mu_i = \beta_0 + \beta_1 X_i\\
+\beta_{0c} & \sim N(0.68, 2^2) \\
+\beta_1    & \sim N(0, 1.6^2) \\
+\sigma     & \sim \text{Exp}(1.3) \\
+\end{split}$$
+
+
+### Model Evaluation
+
+```{r}
+pp_check(model_1_no)
+```
+
+Our model seems to do decent, however the structure of the data is still a bit right skewed as some of the companies included in our dataset have higher earnings around the 3+ billion range. 
+
+
+## Model 1 w/ Interaction
+
+### Model Structure
+
+Next, we interact sector with earnings hoping to improve the model's fit to our dependent variable.  
+
+```{r}
+model_1_interact_no_data <- data_elimatedO %>% 
+  select(c("Earnings_next_year_Scaled","EARNINGS_Scaled","Sector","Is_top_100")) %>% 
+  na.omit()
+
+model_1_interact_no <- stan_glm(
+  Earnings_next_year_Scaled ~ EARNINGS_Scaled*Sector, data = model_1_interact_no_data,
+  family = gaussian,
+  prior_PD = FALSE,
+  chains = 4, iter = 5000*2, seed = 84735, refresh = 0)
+```
+
+
+### Model Evaluation
+
+```{r}
+pp_check(model_1_interact_no)
+```
+
+Unfortunately, this model performs similarly to the previous and is not the best fit. 
+
+
