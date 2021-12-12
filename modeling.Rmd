@@ -88,6 +88,122 @@ testing <- data_elimatedO %>%
 training <- anti_join(data_elimatedO, testing)
 ```
 
+```{r, include=FALSE}
+#Custom Functions
+predict_model<- function(Company, Model){
+  test_comp <- Company
+  test_1 <- testing %>% 
+    filter(COMPANY == test_comp)
+  predict_next_year <- posterior_predict(
+  Model, 
+  newdata = data.frame(test_1))
+  most_recent_year <- testing %>% 
+   filter(COMPANY == test_comp) %>% 
+   filter(row_number()==1)
+most_recent_year <- most_recent_year$YEAR
+actual <- data %>% 
+  filter(COMPANY == test_comp & YEAR == most_recent_year-1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+actual <- actual$EARNINGS_Scaled
+randomsample <- sample_n(as.data.frame(predict_next_year), 750)
+graphing_predictions <- randomsample %>% 
+  mutate(EARNINGS_Scaled = `1`,
+         YEAR = most_recent_year) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year -1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+g <- data %>% 
+  filter(COMPANY == test_comp) %>% 
+  filter(YEAR <= most_recent_year) %>% 
+  ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
+  geom_point() +
+  geom_line() +
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year - 1, 
+                   xend = most_recent_year,
+                   y = actual, 
+                   yend = EARNINGS_Scaled),
+               alpha = 0.03,
+               colour = "red")
+  return(g)
+}
+
+collect_metrics_pred <- function(Model, Datametric){
+  predictions_mode_2 <- posterior_predict(
+  Model, 
+  newdata = data.frame(Datametric))
+prediction_dataframe <- as.data.frame(predictions_mode_2)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),median),
+                    across(where(is.character),~"Median")))
+meadian_predictions <- tail(temp, 1)
+meadian_predictions <- t(meadian_predictions)
+meadian_predictions<-as.data.frame(meadian_predictions)
+meadian_predictions <- meadian_predictions %>% 
+  mutate(median = `20001`) %>% 
+  select(median)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .025),
+                    across(where(is.character),~"Lower95")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower95 <- predictions_lower %>% 
+  mutate(lower95 = `20001`) %>% 
+  select(lower95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .25),
+                    across(where(is.character),~"Lower50")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower50 <- predictions_lower %>% 
+  mutate(lower50 = `20001`) %>% 
+  select(lower50)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .975),
+                    across(where(is.character),~"Upper95")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper95 <- predictions_upper %>% 
+  mutate(upper95 = `20001`) %>% 
+  select(upper95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .75),
+                    across(where(is.character),~"Upper50")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper50 <- predictions_upper %>% 
+  mutate(upper50 = `20001`) %>% 
+  select(upper50)
+
+Testing_with_metrics <- cbind(Datametric, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, meadian_predictions)
+
+median_error <- Testing_with_metrics %>% 
+  mutate(absDist = abs(median - Earnings_next_year_Scaled))
+
+in_95 <- Testing_with_metrics %>% 
+  mutate(Is_95 = (Earnings_next_year_Scaled < upper95) & (Earnings_next_year_Scaled > lower95))
+
+in_50 <- Testing_with_metrics %>% 
+  mutate(Is_50 = (Earnings_next_year_Scaled < upper50) & (Earnings_next_year_Scaled > lower50))
+
+med <- median(median_error$absDist)
+mean95 <- mean(in_95$Is_95)
+mean50 <- mean(in_50$Is_50)
+model_2_metrics <- matrix(c(med,mean95,mean50), ncol = 3)
+colnames(model_2_metrics) <- c("MAE","Within95","Within50")
+model_2_metrics <- as.data.frame(model_2_metrics)
+return(model_2_metrics)
+}
+```
+
+
 
 ## Model 2
 
