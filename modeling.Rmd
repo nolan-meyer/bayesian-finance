@@ -611,7 +611,7 @@ Q - Seasonal moving average order.
 M - The number of time steps for a single seasonal period. M is a very important parameter as it influences the P, D, and Q parameters. For example, an m of 5 for yearly data suggests a 5-year seasonal cycle (in the context of business cycles. 
 
 
-## Model
+## Modeling
 
 After running the model, we will then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: "AMZN"), American Airlines (symbol: "AAL"), and Ford (symbol: "F"). 
 

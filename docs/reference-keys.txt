@@ -18,7 +18,7 @@ is-this-the-right-model
 how-accurate-are-the-models
 bayes-forecast
 model-parameters
-model-1
+modeling
 finalmodel
 reflection
 next-steps
