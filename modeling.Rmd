@@ -480,6 +480,14 @@ SARIMA stands for seasonal auto-regressive integrated moving average. This is an
 
 ARIMA is a method that combines both auto-regressive methods and moving averages- it is widely used on time series data in attempts to predict future values. There are four components that explain time series data, trend, seasonality, irregularity, and cyclic components. 
 
+
+**Reason to use Bayesian forecast:**
+
+The reason that we are using Bayesian forecast is that we could see the prediction of the earnings for not only the next year but for 10 years in the future. Bayesian forecast was created based on seasonal order, trend or seasonality, which could predict the model fairly accurately. 
+
+After running the model, we then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: "AMZN"), American Airlines (symbol: "AAL"), and Koka Kola (symbol: "KO"). 
+
+
 ## Model Parameters
 
 Here are the parameters for an ARIMA model: 
@@ -505,8 +513,10 @@ M - The number of time steps for a single seasonal period. M is a very important
 
 ## Modeling
 
-After running the model, we will then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: "AMZN"), American Airlines (symbol: "AAL"), and Ford (symbol: "F"). 
+After creating the model, we will then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: "AMZN"), American Airlines (symbol: "AAL"), and Coca Cola (symbol: "KO"). 
 
+
+**Amazon Prediction**
 
 ```{r, results='hide'}
 AMZN <- data %>% 
@@ -518,24 +528,18 @@ vector <- AMZN$EARNINGS_Scaled
 
 myts <- ts(vector, start=c(1999), end=c(2021), frequency=1)
 
-sf1 = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
+sf_AMZN = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 
-```{r}
-sf1
-```
-
 ```{r fig3}
-check_residuals(sf1)
-autoplot(forecast(object = sf1,h = 12))
+autoplot(forecast(object = sf_AMZN, h = 12))
 ```
 
-First, for Amazon, we could see that the earnings are predicted to increase from 2021 to 2030, moving from 21 billions to around 38 billions in 2030. 
+First, for Amazon, we see that the earnings are predicted to increase from 2021 to 2030, moving from 21 billion to around 38 billion in 2030. However, we can see that the prediction states that the earnings growth tends to slow down over time over the period. 
 
-For the residuals plot, we can see that the residuals expect to increase in the future and keep increasing as the farther from 2020, the data becomes more and more unpredictable. Overall, the residuals lie around -1 and 0, which suggests that the error is not that far off from the actual value. 
 
-We then move on to the other companies: Microsoft and American Airlines:
+**American Airlines Prediction**
 
 ```{r, results='hide'}
 AAL <- data %>% 
@@ -547,34 +551,35 @@ vector <- AAL$EARNINGS_Scaled
 
 myts <- ts(vector, start=c(1999), end=c(2021), frequency=1)
 
-sf1 = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
+sf_AAL = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 
 ```{r}
-check_residuals(sf1)
-autoplot(forecast(object = sf1,h = 12))
+autoplot(forecast(object = sf_AAL, h = 12))
 ```
 
-For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030. 
+For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030 as predicting a cyclical company's earnings could be a really difficult story. It did not show the similar pattern as Amazon. 
+
+
+**Coca Cola Prediction**
 
 ```{r, results='hide'}
-F <- data %>% 
-  filter(COMPANY == 'F') %>% 
+KO <- data %>% 
+  filter(COMPANY == 'KO') %>% 
   dplyr::select(EARNINGS_Scaled) %>% 
   arrange(EARNINGS_Scaled)
 
-vector <- F$EARNINGS_Scaled
+vector_KO <- KO$EARNINGS_Scaled
 
-myts <- ts(vector, start=c(1999), end=c(2021), frequency=1)
+myts_KO <- ts(vector_KO, start=c(1999), end=c(2021), frequency=1)
 
-sf1 = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
+sf_KO = stan_sarima(ts = myts_KO,order = c(1,1,1),seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 
 ```{r}
-check_residuals(sf1)
-autoplot(forecast(object = sf1,h = 12))
+autoplot(forecast(object = sf_KO,h = 12))
 ```
 
-For Ford, it follows the same case as American Airlines. Even though the earnings increase, the model predicts that Ford's earning will stay relatively the same throughout the year from 2021 to 2030. For the residuals part, the residuals fluctuate around -1 to 1, with some exceptions of 6 and 11 in around 2002 and 2020 (the year when COVID-19 started). 
+For Coca Cola, it follows the same case as American Airlines. Even though the earnings increase over time, the model predicts that Ford's earning will stay relatively the same throughout the year from 2021 to 2030. It should be fairly clear as Coca Cola is a company that has developed for a really long period of time and can be considered to be a dividend company. With that in mind, it is fairly reasonable to see the earnings of the company to stay relatively the same after a period. 
