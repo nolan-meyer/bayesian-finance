@@ -218,7 +218,7 @@ We do not have a strong understanding of variability between and within companie
 
 **Defining Notation**
 
-In our model notation below, $Y$ is earnings for the next year and $X$ is earnings in the current year. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions. 
+In our model notation below, $Y_{ij}$ is earnings for the next year after the $i$th year for company $j$ and $X_{ij}$ is the earnings in the $i$th year for company $j$. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions. 
 
 
 
@@ -350,14 +350,15 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y & \sim N(\mu_{ij}, \sigma_y^2) \;\; \t
 
 ### Is this the right model? 
 
-Next we plot the posterior distributions and compare to the actual values observed in the data set. 
+Using our models we simulate replicated data and then compare these to the observed data to look for discrepancies between the two in the plots below.
+
 
 ```{r}
 pp_check(Diff_inter_train) 
 pp_check(Diff_inter_slope_train)
 ```
 
-Again, several company earnings' on the right seem to be causing model fitness difficulties. Both models run into this problem. 
+Several company earnings' on the right seem to be causing model fitness difficulties. Both models run into this problem. 
 
 There seems to be little difference between the two models in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models. 
 

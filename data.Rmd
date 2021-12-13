@@ -90,6 +90,7 @@ data <- data %>%
 ```
 
 Next, we added lagged variables for earnings and sales as we believe information from previous years will help predict future metrics.
+
 ```{r}
 #Adding Lagged Variables
 data <- data %>% 

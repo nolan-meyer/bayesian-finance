@@ -215,7 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong>Tuning Priors</strong></p>
 <p>We do not have a strong understanding of variability between and within companies, thus we are using weakly informative priors. This means we are using the default values in the stan_glm package.</p>
 <p><strong>Defining Notation</strong></p>
-<p>In our model notation below, <span class="math inline">\(Y\)</span> is earnings for the next year and <span class="math inline">\(X\)</span> is earnings in the current year. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions.</p>
+<p>In our model notation below, <span class="math inline">\(Y_{ij}\)</span> is earnings for the next year after the <span class="math inline">\(i\)</span>th year for company <span class="math inline">\(j\)</span> and <span class="math inline">\(X_{ij}\)</span> is the earnings in the <span class="math inline">\(i\)</span>th year for company <span class="math inline">\(j\)</span>. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions.</p>
 </div>
 <div id="model-1-hierarchical-w-different-intercepts" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Model 1: Hierarchical w/ Different Intercepts</h2>
@@ -313,12 +313,12 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <h2><span class="header-section-number">3.4</span> Model Evaluations</h2>
 <div id="is-this-the-right-model" class="section level3" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Is this the right model?</h3>
-<p>Next we plot the posterior distributions and compare to the actual values observed in the data set.</p>
+<p>Using our models we simulate replicated data and then compare these to the observed data to look for discrepancies between the two in the plots below.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="hierarchical-modeling.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_train) </span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="hierarchical-modeling.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_slope_train)</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
-<p>Again, several company earnings’ on the right seem to be causing model fitness difficulties. Both models run into this problem.</p>
+<p>Several company earnings’ on the right seem to be causing model fitness difficulties. Both models run into this problem.</p>
 <p>There seems to be little difference between the two models in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models.</p>
 </div>
 <div id="how-accurate-are-the-models" class="section level3" number="3.4.2">
