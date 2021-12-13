@@ -213,12 +213,12 @@ return(model_2_metrics)
 
 **Tuning Priors**
 
-We do not have a strong understanding of variability between and within companies, thus we are using weakly informative priors. This means we are using the default values in the stan_glm package. 
+Earnings, like most things in the financial markets are quite volatile, making them harder to model. We do not have a strong understanding of the variability between and within companies, thus we are using weakly informative priors. This means that the models will rely more on the data to form the posterior distributions. We are using the default prior values found in the stan_glmer package. 
 
 
 **Defining Notation**
 
-In our model notation below, $Y_{ij}$ is earnings for the next year after the $i$th year for company $j$ and $X_{ij}$ is the earnings in the $i$th year for company $j$. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions. 
+In our model notation below, $Y_{ij}$ is earnings for the next year after the $i$th year for company $j$ and $X_{ij}$ is the earnings in the $i$th year for company $j$. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions. 
 
 
 
@@ -292,7 +292,7 @@ eliminated %>%
     facet_grid(~ COMPANY)
 ```
 
-To get a better idea of the varying slopes, I graph 50 random companies together. 
+To get a better idea of the varying slopes, we graphed 50 random companies together. 
 
 ```{r}
 vector <- eliminated$COMPANY
@@ -373,9 +373,6 @@ Below, we compare our predictions for American Airlines. We plot 750 random valu
 ```{r}
 set.seed(84732)
 predict_model("AAL", Diff_inter_train)
-# mcmc_areas(predict_next_year, prob = 0.8) +
-#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = "dashed", colour = "red") 
-#Need Help Because X scale is different
 ```
 
 
@@ -384,8 +381,6 @@ predict_model("AAL", Diff_inter_train)
 ```{r}
 set.seed(84732)
 predict_model("AAL", Diff_inter_slope_train)
-# mcmc_areas(predict_next_year, prob = 0.8) +
-#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = "dashed", colour = "red") 
 ```
 
 
@@ -410,7 +405,7 @@ Diff_inter_slope_metrics <- collect_metrics_pred(Diff_inter_slope_train, testing
 
 **Evaluating Metrics**
 
-For the prediction metrics, we calculated 20,000 values for each individual company using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.  
+For the prediction metrics, using the training dataset, we calculated 20,000 values for each individual company for their earnings next year (the last year we have data on them) using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.  
 
 Different Intercepts Model:
 
@@ -504,7 +499,7 @@ tidy(Diff_inter_slope_train, effects = "ran_pars")
 
 The standard deviation $\sigma_1$ in the Earnings scaled coefficient ($\beta_{1j}$) is likely to be around 0.31 billion per year. In the grand scheme of things, this number is quite high. 
 
-For $\sigma_y$, an individual Company's net earnings next year tend to deviate from their own mean model by .35 billion. 
+For $\sigma_y$, an individual Company's net earnings next year tend to deviate from their own mean model by 0.35 billion. 
 
 There is a semi strong correlation between the Company Specific $\beta_{0j}$ and $\beta_{1j}$ parameters of -0.74. It seems that company's with initial earnings will tend to experience a decrease in earnings compared to their previous years. 
 
