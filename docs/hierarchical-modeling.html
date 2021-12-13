@@ -205,12 +205,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 3</span> Hierarchical Modeling</h1>
 <div id="set-up" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Set Up</h2>
+<p><strong>Creating a testing set</strong></p>
 <p>Since we have time-series data, we created a testing set by sub-setting each company’s 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="hierarchical-modeling.html#cb8-1" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="hierarchical-modeling.html#cb8-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
 <span id="cb8-3"><a href="hierarchical-modeling.html#cb8-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>)</span>
 <span id="cb8-4"><a href="hierarchical-modeling.html#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="hierarchical-modeling.html#cb8-5" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(data_elimatedO, testing)</span></code></pre></div>
+<p><strong>Tuning Priors</strong></p>
+<p>We do not have a strong understanding of variability between and within companies, thus we are using weakly informative priors. This means we are using the default values in the stan_glm package.</p>
+<p><strong>Defining Notation</strong></p>
+<p>In our model notation below, <span class="math inline">\(Y\)</span> is earnings for the next year and <span class="math inline">\(X\)</span> is earnings in the current year. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions.</p>
 </div>
 <div id="model-1-hierarchical-w-different-intercepts" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Model 1: Hierarchical w/ Different Intercepts</h2>

@@ -69,6 +69,8 @@ data <- data %>%
 
 ## Set Up
 
+**Creating a testing set**
+
 Since we have time-series data, we created a testing set by sub-setting each company's 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy. 
 
 ```{r, include=FALSE}
@@ -207,6 +209,16 @@ model_2_metrics <- as.data.frame(model_2_metrics)
 return(model_2_metrics)
 }
 ```
+
+
+**Tuning Priors**
+
+We do not have a strong understanding of variability between and within companies, thus we are using weakly informative priors. This means we are using the default values in the stan_glm package. 
+
+
+**Defining Notation**
+
+In our model notation below, $Y$ is earnings for the next year and $X$ is earnings in the current year. Both variables are independent. For example, Y = Earnings of Apple in 2017 in billions, and X = Earnings of Apple in 2016 in billions. 
 
 
 
