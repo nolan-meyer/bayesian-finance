@@ -16,7 +16,7 @@ model-structure-1
 model-evaluations
 is-this-the-right-model
 how-accurate-are-the-models
-interpreting-coefficents-not-completed
+interpreting-coefficents
 bayes-forecast
 model-parameters
 modeling

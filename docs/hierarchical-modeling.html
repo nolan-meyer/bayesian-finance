@@ -168,7 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#is-this-the-right-model"><i class="fa fa-check"></i><b>3.4.1</b> Is this the right model?</a></li>
 <li class="chapter" data-level="3.4.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#how-accurate-are-the-models"><i class="fa fa-check"></i><b>3.4.2</b> How Accurate are the models?</a></li>
-<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents-not-completed"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents: NOT COMPLETED</a></li>
+<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents:</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>4</b> Bayes Forecast</a>
@@ -356,8 +356,8 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <p>Model 2 Shrinkage:</p>
 <p><img src="series_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 </div>
-<div id="interpreting-coefficents-not-completed" class="section level3" number="3.4.3">
-<h3><span class="header-section-number">3.4.3</span> Interpreting Coefficents: NOT COMPLETED</h3>
+<div id="interpreting-coefficents" class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Interpreting Coefficents:</h3>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 13 × 5
 ##    term                         estimate std.error conf.low conf.high
@@ -375,6 +375,7 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 ## 11 SectorMaterials                0.0971   0.0989  -0.0316     0.224 
 ## 12 SectorReal Estate             -0.0825   0.0959  -0.207      0.0401
 ## 13 SectorUtilities                0.234    0.0962   0.110      0.357</code></pre>
+<p>For the model Diff_inter_train, we could see that the earnings this year has a much higher impact on the prediction of next year’s earnings compared to the earnings 1 year ago (0.22158622 and 0.09614204). With the sector, we can clearly see that different sectors have completely different estimation for earnings. Based on the model, if a company is in Consumer Staples,Energy or Financials, that company will likely have higher prediction for earnings next year than the others. On the other hand, if a company is in the Real Estate field, that company will likely to have a lower earnings than the others.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 13 × 5
 ##    term                          estimate std.error conf.low conf.high
@@ -392,13 +393,29 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 ## 11 SectorMaterials              -0.0381     0.0704   -0.128     0.0521
 ## 12 SectorReal Estate            -0.128      0.0697   -0.217    -0.0371
 ## 13 SectorUtilities               0.0597     0.0685   -0.0272    0.148</code></pre>
-<p><strong>Global Standard Deviation Parameters: NOT COMPLETED ADFASGARGERGEARG</strong></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="hierarchical-modeling.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb31-2"><a href="hierarchical-modeling.html#cb31-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb31-3"><a href="hierarchical-modeling.html#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="hierarchical-modeling.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb31-5"><a href="hierarchical-modeling.html#cb31-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
-<p>In model 2, about 40.06% of the variance can be explained between companies. In model 3, about 38.29% of the variance can be explained between companies. This means that when including sectors and lagged variables, more variable shrinkage occurred. Unfortunately this shrinkage is not as evident in the plotted graphs above. Model 3’s baseline intercepts differ among each other slightly less than model 2’s.</p>
+<p>For the Diff_inter_slope_train model, the impact of this year’s earnings is much stronger compared to the other variables (0.5467834739). It states that for one billion increase in earnings this year, the earnings for next year will increase by 0.5467 billions. Earnings next year also has much stronger impact than earnings 1 year ago.</p>
+<p>About the sector, the situation is also fairly similar as companies that are in Consumer Staples, Energy, or Financials will likely to have higher next year’s earnings than the others. However, in this model, the impact of the sector is much smaller than the Diff_inter_train model. The most notable negative earnings impact also comes from real estate as according to the model, company that is in real estate will see the earnings next year smaller than the baseline earnings of 0.12 billions.</p>
+<p><strong>Global Standard Deviation Parameters</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="hierarchical-modeling.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_train, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 3
+##   term                    group    estimate
+##   &lt;chr&gt;                   &lt;chr&gt;       &lt;dbl&gt;
+## 1 sd_(Intercept).COMPANY  COMPANY     0.312
+## 2 sd_Observation.Residual Residual    0.403</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="hierarchical-modeling.html#cb33-1" aria-hidden="true" tabindex="-1"></a>((<span class="fl">0.3116985</span><span class="sc">^</span><span class="dv">2</span>))<span class="sc">/</span>((<span class="fl">0.3116985</span><span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.4029317</span><span class="sc">^</span><span class="dv">2</span>))<span class="sc">*</span><span class="dv">100</span></span></code></pre></div>
+<pre><code>## [1] 37.43824</code></pre>
+<p>In the model with varying intercepts, about 37.43% of the variance can be explained between companies.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="hierarchical-modeling.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 4 × 3
+##   term                                    group    estimate
+##   &lt;chr&gt;                                   &lt;chr&gt;       &lt;dbl&gt;
+## 1 sd_(Intercept).COMPANY                  COMPANY     0.285
+## 2 sd_EARNINGS_Scaled.COMPANY              COMPANY     0.316
+## 3 cor_(Intercept).EARNINGS_Scaled.COMPANY COMPANY    -0.743
+## 4 sd_Observation.Residual                 Residual    0.353</code></pre>
+<p>The standard deviation <span class="math inline">\(\sigma_1\)</span> in the Earnings scaled coefficient (<span class="math inline">\(\beta_{1j}\)</span>) is likely to be around 0.31 billion per year. In the grand scheme of things, this number is quite high.</p>
+<p>For <span class="math inline">\(\sigma_y\)</span>, an individual Company’s net earnings next year tend to deviate from their own mean model by .35 billion.</p>
+<p>There is a semi strong correlation between the Company Specific <span class="math inline">\(\beta_{0j}\)</span> and <span class="math inline">\(\beta_{1j}\)</span> parameters of -0.74. It seems that company’s with initial earnings will tend to experience a decrease in earnings compared to their previous years.</p>
 </div>
 </div>
 </div>
