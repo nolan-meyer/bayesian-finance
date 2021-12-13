@@ -6,6 +6,12 @@
 
 ## Citations
 
+“Modeltime Integration.” Bayesmodels, https://albertoalmuinha.github.io/bayesmodels/articles/modeltime-integration.html. 
+
+*S&P 500 Companies - S&P 500 Index Components by Market Cap*, https://www.slickcharts.com/sp500
+
+“Yahoo Finance - Stock Market Live, Quotes, Business &amp; Finance News.” Yahoo! Finance, Yahoo!, https://finance.yahoo.com/. 
+
 ## Code Appendix
 
 To reproduce these results, the complete files and data are provided below:
