@@ -69,7 +69,7 @@ data <- data %>%
 
 ## Set Up
 
-Since we have time-series data, we created a testing set by sub-setting each company's 2nd to latest year. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy.
+Since we have time-series data, we created a testing set by sub-setting each company's 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy. 
 
 ```{r, include=FALSE}
 Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
@@ -90,41 +90,46 @@ training <- anti_join(data_elimatedO, testing)
 
 ```{r, include=FALSE}
 #Custom Functions
-predict_model<- function(Company, Model){
-  test_comp <- Company
-  test_1 <- testing %>% 
-    filter(COMPANY == test_comp)
-  predict_next_year <- posterior_predict(
+predict_model <- function(Company, Model){
+test_comp <- Company
+test_1 <- testing %>% 
+    filter(COMPANY == test_comp) %>% 
+  select(c("Sector","YEAR","Earnings_next_year_Scaled","EARNINGS_Scaled","EARNINGS_1_YEAR_AGO"))
+predict_next_year <- posterior_predict(
   Model, 
   newdata = data.frame(test_1))
-  most_recent_year <- testing %>% 
-   filter(COMPANY == test_comp) %>% 
-   filter(row_number()==1)
-most_recent_year <- most_recent_year$YEAR
+predicted_median <- median(predict_next_year)
+
+most_recent_year <- test_1$YEAR + 1
 actual <- data %>% 
   filter(COMPANY == test_comp & YEAR == most_recent_year-1) %>% 
   select(c("EARNINGS_Scaled","YEAR"))
 actual <- actual$EARNINGS_Scaled
+
+
 randomsample <- sample_n(as.data.frame(predict_next_year), 750)
+
 graphing_predictions <- randomsample %>% 
   mutate(EARNINGS_Scaled = `1`,
          YEAR = most_recent_year) %>% 
-  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year -1) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year-1) %>% 
   select(c("EARNINGS_Scaled","YEAR"))
+
 g <- data %>% 
   filter(COMPANY == test_comp) %>% 
   filter(YEAR <= most_recent_year) %>% 
   ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
   geom_point() +
   geom_line() +
-  geom_segment(data = graphing_predictions, aes(x = most_recent_year - 1, 
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year-1, 
                    xend = most_recent_year,
                    y = actual, 
                    yend = EARNINGS_Scaled),
                alpha = 0.03,
                colour = "red")
-  return(g)
+return(g)
 }
+
 
 collect_metrics_pred <- function(Model, Datametric){
   predictions_mode_2 <- posterior_predict(
@@ -287,7 +292,7 @@ eliminated %>%
   geom_smooth(method = "lm", se= FALSE, size = 0.5)
 ```
 
-We believe it makes sense to replace the global earnings coefficientwith a company specific earnings coefficient. 
+We believe it makes sense to replace the global earnings coefficient with a company specific earnings coefficient. 
 
 
 ```{r}
@@ -392,6 +397,8 @@ Diff_inter_slope_metrics <- collect_metrics_pred(Diff_inter_slope_train, testing
 
 **Evaluating Metrics**
 
+For the prediction metrics, we calculated 20,000 values for each individual company using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.  
+
 Different Intercepts Model:
 
 ```{r}
@@ -409,7 +416,7 @@ We can see that our model with varying intercepts and slopes (model 2) preforms 
 
 **Shrinkage **
 
-Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models. 
+Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models. We randomly sampled 70 companies, since if we plot all companies we will have more than 400 companies on the X-axis. We can visually see how the intercepts become less varied as we are looking at the hierarchical model with different intercept and slopes. 
 
 Model 1 Shrinkage:
 
@@ -448,6 +455,14 @@ ggplot(
     geom_pointrange() +
     geom_hline(yintercept = mean(data$Earnings_next_year_Scaled), linetype = "dashed") + 
   xaxis_text(angle = 90, hjust = 1)
+```
+
+
+### Interpreting Coefficents: NOT COMPLETED
+
+```{r}
+tidy(Diff_inter_train, effects = "fixed", conf.int = TRUE, conf.level = .80)
+tidy(Diff_inter_slope_train, effects = "fixed", conf.int = TRUE, conf.level = .80)
 ```
 
 

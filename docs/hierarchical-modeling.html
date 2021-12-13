@@ -168,6 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#is-this-the-right-model"><i class="fa fa-check"></i><b>3.4.1</b> Is this the right model?</a></li>
 <li class="chapter" data-level="3.4.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#how-accurate-are-the-models"><i class="fa fa-check"></i><b>3.4.2</b> How Accurate are the models?</a></li>
+<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents-not-completed"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents: NOT COMPLETED</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>4</b> Bayes Forecast</a>
@@ -204,7 +205,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 3</span> Hierarchical Modeling</h1>
 <div id="set-up" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Set Up</h2>
-<p>Since we have time-series data, we created a testing set by sub-setting each company’s 2nd to latest year. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy.</p>
+<p>Since we have time-series data, we created a testing set by sub-setting each company’s 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="hierarchical-modeling.html#cb8-1" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="hierarchical-modeling.html#cb8-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
 <span id="cb8-3"><a href="hierarchical-modeling.html#cb8-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>)</span>
@@ -273,7 +274,7 @@ Y_{ij} | \beta_{0j}, \beta_1, \sigma_y
 <span id="cb13-6"><a href="hierarchical-modeling.html#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled, <span class="at">group =</span> COMPANY))<span class="sc">+</span></span>
 <span id="cb13-7"><a href="hierarchical-modeling.html#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se=</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p>We believe it makes sense to replace the global earnings coefficientwith a company specific earnings coefficient.</p>
+<p>We believe it makes sense to replace the global earnings coefficient with a company specific earnings coefficient.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="hierarchical-modeling.html#cb14-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_train <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;Diff_inter_slope_train_nick.rds&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="hierarchical-modeling.html#cb15-1" aria-hidden="true" tabindex="-1"></a>model_diff_inter_slope_train_data <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span></span>
 <span id="cb15-2"><a href="hierarchical-modeling.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&quot;Earnings_next_year_Scaled&quot;</span>,<span class="st">&quot;Sector&quot;</span>,<span class="st">&quot;COMPANY&quot;</span>,<span class="st">&quot;EARNINGS_Scaled&quot;</span>,<span class="st">&quot;EARNINGS_1_YEAR_AGO&quot;</span>)) <span class="sc">%&gt;%</span> </span>
@@ -333,6 +334,7 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <span id="cb22-2"><a href="hierarchical-modeling.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot2::scale_y_discrete(labels = c(`test_comp`)) + geom_vline(xintercept = actual, linetype = &quot;dashed&quot;, colour = &quot;red&quot;) </span></span></code></pre></div>
 <p>The predictions for the second model seem to be slightly better as more posterior predictive points are near the actual value for “2020”.</p>
 <p><strong>Evaluating Metrics</strong></p>
+<p>For the prediction metrics, we calculated 20,000 values for each individual company using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.</p>
 <p>Different Intercepts Model:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="hierarchical-modeling.html#cb23-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics</span></code></pre></div>
 <pre><code>##         MAE  Within95  Within50
@@ -343,17 +345,54 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 ## 1 0.2781092 0.7931034 0.4935345</code></pre>
 <p>We can see that our model with varying intercepts and slopes (model 2) preforms slightly better. Where our average median posterior prediction is off by 0.28 billion as opposed to 0.362 billion when we only have differing intercepts. Furthermore, our 95 and 50 interval values are both better in the model with different intercept and slope.</p>
 <p><strong>Shrinkage </strong></p>
-<p>Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models.</p>
+<p>Since we modeled based off different companies having different intercepts, it is worthwhile to checkout how the company baselines shrunk compared to each other and between the two different models. We randomly sampled 70 companies, since if we plot all companies we will have more than 400 companies on the X-axis. We can visually see how the intercepts become less varied as we are looking at the hierarchical model with different intercept and slopes.</p>
 <p>Model 1 Shrinkage:</p>
 <p><img src="series_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 <p>Model 2 Shrinkage:</p>
 <p><img src="series_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+</div>
+<div id="interpreting-coefficents-not-completed" class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Interpreting Coefficents: NOT COMPLETED</h3>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 13 × 5
+##    term                         estimate std.error conf.low conf.high
+##    &lt;chr&gt;                           &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+##  1 (Intercept)                    0.320    0.0744   0.225      0.417 
+##  2 EARNINGS_Scaled                0.222    0.00686  0.213      0.230 
+##  3 EARNINGS_1_YEAR_AGO            0.0961   0.00613  0.0883     0.104 
+##  4 SectorConsumer Discretionary   0.115    0.0856   0.00449    0.225 
+##  5 SectorConsumer Staples         0.341    0.0998   0.212      0.469 
+##  6 SectorEnergy                   0.337    0.112    0.195      0.480 
+##  7 SectorFinancials               0.288    0.0862   0.178      0.400 
+##  8 SectorHealth Care              0.0608   0.0865  -0.0500     0.173 
+##  9 SectorIndustrials              0.132    0.0843   0.0248     0.242 
+## 10 SectorInformation Technology   0.0635   0.0844  -0.0449     0.174 
+## 11 SectorMaterials                0.0971   0.0989  -0.0316     0.224 
+## 12 SectorReal Estate             -0.0825   0.0959  -0.207      0.0401
+## 13 SectorUtilities                0.234    0.0962   0.110      0.357</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 13 × 5
+##    term                          estimate std.error conf.low conf.high
+##    &lt;chr&gt;                            &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+##  1 (Intercept)                   0.308      0.0555    0.236     0.378 
+##  2 EARNINGS_Scaled               0.547      0.0203    0.521     0.573 
+##  3 EARNINGS_1_YEAR_AGO           0.0408     0.00697   0.0320    0.0500
+##  4 SectorConsumer Discretionary -0.0272     0.0630   -0.107     0.0536
+##  5 SectorConsumer Staples        0.0583     0.0726   -0.0339    0.152 
+##  6 SectorEnergy                  0.181      0.0794    0.0778    0.283 
+##  7 SectorFinancials              0.119      0.0623    0.0397    0.201 
+##  8 SectorHealth Care             0.000288   0.0636   -0.0801    0.0823
+##  9 SectorIndustrials             0.0192     0.0619   -0.0592    0.0996
+## 10 SectorInformation Technology -0.0370     0.0613   -0.116     0.0419
+## 11 SectorMaterials              -0.0381     0.0704   -0.128     0.0521
+## 12 SectorReal Estate            -0.128      0.0697   -0.217    -0.0371
+## 13 SectorUtilities               0.0597     0.0685   -0.0272    0.148</code></pre>
 <p><strong>Global Standard Deviation Parameters: NOT COMPLETED ADFASGARGERGEARG</strong></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="hierarchical-modeling.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb27-2"><a href="hierarchical-modeling.html#cb27-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb27-3"><a href="hierarchical-modeling.html#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="hierarchical-modeling.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
-<span id="cb27-5"><a href="hierarchical-modeling.html#cb27-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="hierarchical-modeling.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_2, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb31-2"><a href="hierarchical-modeling.html#cb31-2" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4512</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5519447</span><span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb31-3"><a href="hierarchical-modeling.html#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="hierarchical-modeling.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_3, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span>
+<span id="cb31-5"><a href="hierarchical-modeling.html#cb31-5" aria-hidden="true" tabindex="-1"></a>(<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>((<span class="fl">0.4294</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="fl">0.5450631</span>)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <p>In model 2, about 40.06% of the variance can be explained between companies. In model 3, about 38.29% of the variance can be explained between companies. This means that when including sectors and lagged variables, more variable shrinkage occurred. Unfortunately this shrinkage is not as evident in the plotted graphs above. Model 3’s baseline intercepts differ among each other slightly less than model 2’s.</p>
 </div>
 </div>
