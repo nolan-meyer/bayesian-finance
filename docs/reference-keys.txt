@@ -21,6 +21,11 @@ bayes-forecast
 model-parameters
 modeling
 finalmodel
+model-structure-2
+model-evaluation
+diagnostic-plots
+metrics
+summary
 reflection
 next-steps
 acknowledgements

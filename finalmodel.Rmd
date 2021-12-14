@@ -1,1 +1,317 @@
 # Final Model {#finalmodel}
+
+```{r, echo=FALSE}
+library(tidyverse)         # for reading in data, graphing, and cleaning
+library(tidymodels)        # for modeling ... tidily
+library(usemodels)         # for suggesting step_XXX() functions
+library(glmnet)            # for regularized regression, including LASSO
+library(naniar)            # for examining missing values (NAs)
+library(lubridate)         # for date  manipulation
+library(moderndive)        # for King County housing data
+library(vip)               # for variable importance plots
+library(rmarkdown)         # for paged tables
+library(dplyr)
+library(janitor)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(bayesforecast)    # Bayes Forecasting (Playing around) 
+library(bayesrules)
+library(tidyverse)
+library(rstanarm)
+library(broom.mixed)
+library(tidybayes)
+library(tidyverse)
+library(bayesplot)
+library(ggplot2)
+```
+
+```{r, echo=FALSE}
+data <- read.csv("FINALDATASET.csv")
+#Selecting necessary variables
+data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", "SALES", "CASH", "Name", "Sector", "Earnings_next_year"))
+
+#Scaling Variables of Interest
+data <- data %>% 
+  mutate(EARNINGS_Scaled = EARNINGS/1000000000,
+         CASH_Scaled = CASH/1000000000,
+         MARKET.CAP_Scaled = MARKET.CAP/1000000000,
+         Earnings_next_year_Scaled = Earnings_next_year/1000000000,
+         SALES_Scaled = SALES/1000000000)
+
+#Adding Lagged Variables
+data <- data %>% 
+  group_by(COMPANY) %>%
+  mutate(EARNINGS_1_YEAR_AGO = lead(EARNINGS_Scaled, n = 1), 
+         EARNINGS_2_YEAR_AGO = lead(EARNINGS_Scaled, n = 2),
+         EARNINGS_3_YEAR_AGO = lead(EARNINGS_Scaled, n = 3),
+         EARNINGS_4_YEAR_AGO = lead(EARNINGS_Scaled, n = 4)) %>% 
+  mutate(SALES_1_YEAR_AGO = lead(SALES_Scaled, n = 1),
+         SALES_2_YEAR_AGO = lead(SALES_Scaled, n = 2),
+         SALES_3_YEAR_AGO = lead(SALES_Scaled, n = 3),
+         SALES_4_YEAR_AGO = lead(SALES_Scaled, n = 4))
+
+#Add_Dummy if Company is 100
+temp <- data %>% 
+  group_by(COMPANY) %>% 
+  summarize(count = n(), 
+            mean_MC = mean(MARKET.CAP)) %>% 
+  filter(count == 23) %>% 
+  arrange(desc(mean_MC)) %>% 
+  head(100)
+
+temp <- temp$COMPANY
+
+data <- data %>% 
+  mutate(Is_top_100 = case_when(COMPANY %in% temp ~ 1,TRUE ~ 0))
+```
+
+```{r, include=FALSE}
+Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
+iqr <- IQR(data$Earnings_next_year_Scaled, na.rm = TRUE)
+up <-  Q[2]+.90*iqr # Upper Range  
+low<- Q[1]-.90*iqr # Lower Range
+eliminated<- subset(data, data$Earnings_next_year_Scaled > (low) & data$Earnings_next_year_Scaled < (up))
+data_elimatedO <- eliminated
+```
+
+```{r, include=FALSE}
+testing <- data_elimatedO %>% 
+   group_by(COMPANY) %>% 
+   filter(row_number()==1)
+
+training <- anti_join(data_elimatedO, testing)
+```
+
+```{r, include=FALSE}
+predict_model<- function(Company, Model){
+  test_comp <- Company
+  test_1 <- testing %>% 
+    filter(COMPANY == test_comp)
+  predict_next_year <- posterior_predict(
+  Model, 
+  newdata = data.frame(test_1))
+  most_recent_year <- testing %>% 
+   filter(COMPANY == test_comp) %>% 
+   filter(row_number()==1)
+most_recent_year <- most_recent_year$YEAR
+actual <- data %>% 
+  filter(COMPANY == test_comp & YEAR == most_recent_year-1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+actual <- actual$EARNINGS_Scaled
+randomsample <- sample_n(as.data.frame(predict_next_year), 750)
+graphing_predictions <- randomsample %>% 
+  mutate(EARNINGS_Scaled = `1`,
+         YEAR = most_recent_year) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year -1) %>% 
+  select(c("EARNINGS_Scaled","YEAR"))
+g <- data %>% 
+  filter(COMPANY == test_comp) %>% 
+  filter(YEAR <= most_recent_year) %>% 
+  ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
+  geom_point() +
+  geom_line() +
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year - 1, 
+                   xend = most_recent_year,
+                   y = actual, 
+                   yend = EARNINGS_Scaled),
+               alpha = 0.03,
+               colour = "red")
+  return(g)
+}
+collect_metrics_pred <- function(Model, Datametric){
+  predictions_mode_2 <- posterior_predict(
+  Model, 
+  newdata = data.frame(Datametric))
+prediction_dataframe <- as.data.frame(predictions_mode_2)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),median),
+                    across(where(is.character),~"Median")))
+meadian_predictions <- tail(temp, 1)
+meadian_predictions <- t(meadian_predictions)
+meadian_predictions<-as.data.frame(meadian_predictions)
+meadian_predictions <- meadian_predictions %>% 
+  mutate(median = `20001`) %>% 
+  select(median)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .025),
+                    across(where(is.character),~"Lower95")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower95 <- predictions_lower %>% 
+  mutate(lower95 = `20001`) %>% 
+  select(lower95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .25),
+                    across(where(is.character),~"Lower50")))
+predictions_lower <- tail(temp, 1)
+predictions_lower <- t(predictions_lower)
+predictions_lower<-as.data.frame(predictions_lower)
+predictions_lower50 <- predictions_lower %>% 
+  mutate(lower50 = `20001`) %>% 
+  select(lower50)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .975),
+                    across(where(is.character),~"Upper95")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper95 <- predictions_upper %>% 
+  mutate(upper95 = `20001`) %>% 
+  select(upper95)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .75),
+                    across(where(is.character),~"Upper50")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_upper50 <- predictions_upper %>% 
+  mutate(upper50 = `20001`) %>% 
+  select(upper50)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .05),
+                    across(where(is.character),~"Lower90")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_Lower90 <- predictions_upper %>% 
+  mutate(Lower90 = `20001`) %>% 
+  select(Lower90)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .95),
+                    across(where(is.character),~"Upper90")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_Upper90 <- predictions_upper %>% 
+  mutate(Upper90 = `20001`) %>% 
+  select(Upper90)
+
+Testing_with_metrics <- cbind(Datametric, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, predictions_Lower90, predictions_Upper90, meadian_predictions)
+
+median_error <- Testing_with_metrics %>% 
+  mutate(absDist = abs(median - Earnings_next_year_Scaled))
+
+in_95 <- Testing_with_metrics %>% 
+  mutate(Is_95 = (Earnings_next_year_Scaled < upper95) & (Earnings_next_year_Scaled > lower95))
+
+in_50 <- Testing_with_metrics %>% 
+  mutate(Is_50 = (Earnings_next_year_Scaled < upper50) & (Earnings_next_year_Scaled > lower50))
+
+in_90 <- Testing_with_metrics %>% 
+  mutate(Is_90 = (Earnings_next_year_Scaled < Upper90) & (Earnings_next_year_Scaled > Lower90))
+
+med <- median(median_error$absDist)
+mean95 <- mean(in_95$Is_95)
+mean50 <- mean(in_50$Is_50)
+mean90 <- mean(in_90$Is_90)
+model_2_metrics <- matrix(c(med,mean95,mean50, mean90), ncol = 4)
+colnames(model_2_metrics) <- c("MAE","Within95","Within50", "Within90")
+model_2_metrics <- as.data.frame(model_2_metrics)
+return(model_2_metrics)
+}
+```
+
+From the models we explored, we have chosen the hierarchical model with different slopes and intercepts to be the best one. We provide a standalone summary of this model below.
+
+## Model Structure
+
+```{r, eval=FALSE}
+model_diff_inter_slope_train_data <- training %>%
+  select(c("Earnings_next_year_Scaled","Sector","COMPANY","EARNINGS_Scaled","EARNINGS_1_YEAR_AGO")) %>% 
+  na.omit()
+
+diff_slope_inter_model_train <- stan_glmer(
+  Earnings_next_year_Scaled ~ EARNINGS_Scaled + EARNINGS_1_YEAR_AGO + (EARNINGS_Scaled | COMPANY) + Sector, data = model_diff_inter_slope_train_data, 
+  family = gaussian,
+  chains = 4, iter = 5000*2, seed = 84735, 
+  prior_PD = FALSE)
+write_rds(diff_slope_inter_model_train, "Diff_inter_slope_train_nick.rds")
+```
+
+```{r}
+Diff_inter_slope_train <- readRDS("Diff_inter_slope_train_nick.rds")
+```
+
+```{r}
+prior_summary(Diff_inter_slope_train)
+```
+
+**Model Notation**
+
+$$\begin{split}
+Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y & \sim N(\mu_{ij}, \sigma_y^2) \;\; \text{ where } \; \mu_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + \beta_{2} X_{ij}  + \beta_{3} X_{ij}...\\
+& \\
+\beta_{0j} & \sim N(\beta_0, \sigma_0^2) \\
+\beta_{1j} & \sim N(\beta_1, \sigma_1^2) \\
+& \\
+\beta_{0c} & \sim N(0.59, 1.5^2)  \\
+\beta_1 & \sim N(0, 1.74^2) \\
+.\\
+.\\
+.\\
+\sigma_y & \sim \text{Exp}(1.6)    \\
+\sigma_0, \sigma_1, ... & \sim \text{(something a bit complicated)}. \\
+\end{split}$$
+
+
+## Model Evaluation
+
+### Diagnostic Plots
+
+```{r, eval=FALSE}
+mcmc_trace(Diff_inter_slope_train)
+mcmc_dens_overlay(Diff_inter_slope_train)
+```
+
+```{r}
+pp_check(Diff_inter_slope_train)
+```
+
+The model did an okay job modeling the true structure of the data. We see that several company earnings' on the right seem to be causing the model some difficulties.  
+
+
+### Metrics
+
+```{r, include=FALSE}
+set.seed(84732)
+testing_1 <- testing %>%
+  na.omit()
+Diff_inter_slope_metrics <- collect_metrics_pred(Diff_inter_slope_train, testing_1)
+```
+
+```{r}
+Diff_inter_slope_metrics
+```
+
+In our model with varying intercepts and slopes the average median posterior prediction is off by 0.28 billion. Furthermore, 79.3% of the earnings next year fall within the 95% prediction intervals and 49.4% are within the 50% prediction intervals. 
+
+```{r}
+tidy(Diff_inter_slope_train, effects = "fixed", conf.int = TRUE, conf.level = .80)
+```
+
+The impact of this year's earnings is much stronger compared to the other variables (0.5467834739). It states that for one billion increase in earnings this year, the earnings for next year will increase by 0.5467 billions. Earnings next year also has much stronger impact than earnings 1 year ago. 
+
+About the sector, the situation is also fairly similar as companies that are in Consumer Staples, Energy, or Financials will likely to have higher next year's earnings than the others. However, in this model, the impact of the sector is smaller than the Diff_inter_train model. The most notable negative earnings impact also comes from real estate as according to the model, company that is in real estate will see the earnings next year smaller than the baseline earnings of 0.12 billions. 
+
+```{r}
+tidy(Diff_inter_slope_train, effects = "ran_pars")
+```
+
+The standard deviation $\sigma_1$ in the Earnings scaled coefficient ($\beta_{1j}$) is likely to be around 0.31 billion per year. In the grand scheme of things, this number is quite high. 
+
+For $\sigma_y$, an individual Company's net earnings next year tend to deviate from their own mean model by 0.35 billion. 
+
+There is a semi strong correlation between the Company Specific $\beta_{0j}$ and $\beta_{1j}$ parameters of -0.74. It seems that company's with initial earnings will tend to experience a decrease in earnings compared to their previous years. 
+
+
+## Summary
+

@@ -168,7 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#is-this-the-right-model"><i class="fa fa-check"></i><b>3.4.1</b> Is this the right model?</a></li>
 <li class="chapter" data-level="3.4.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#how-accurate-are-the-models"><i class="fa fa-check"></i><b>3.4.2</b> How Accurate are the models?</a></li>
-<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents:</a></li>
+<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>4</b> Bayes Forecast</a>
@@ -176,7 +176,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.1" data-path="bayes-forecast.html"><a href="bayes-forecast.html#model-parameters"><i class="fa fa-check"></i><b>4.1</b> Model Parameters</a></li>
 <li class="chapter" data-level="4.2" data-path="bayes-forecast.html"><a href="bayes-forecast.html#modeling"><i class="fa fa-check"></i><b>4.2</b> Modeling</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a></li>
+<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="finalmodel.html"><a href="finalmodel.html#model-structure-2"><i class="fa fa-check"></i><b>5.1</b> Model Structure</a></li>
+<li class="chapter" data-level="5.2" data-path="finalmodel.html"><a href="finalmodel.html#model-evaluation"><i class="fa fa-check"></i><b>5.2</b> Model Evaluation</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="finalmodel.html"><a href="finalmodel.html#diagnostic-plots"><i class="fa fa-check"></i><b>5.2.1</b> Diagnostic Plots</a></li>
+<li class="chapter" data-level="5.2.2" data-path="finalmodel.html"><a href="finalmodel.html#metrics"><i class="fa fa-check"></i><b>5.2.2</b> Metrics</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="finalmodel.html"><a href="finalmodel.html#summary"><i class="fa fa-check"></i><b>5.3</b> Summary</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>6</b> Reflection</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>6.1</b> Next Steps</a></li>
@@ -208,9 +217,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="acknowledgements" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Acknowledgements</h2>
+<p>For our project, we want to thank Dr. Alicia Johnson for teaching us a lot of useful knowledge about Bayesian Statistics. Moreover, Dr. Alicia Johnson has given us a ton of feedback, and helped us through all the difficulties we have encountered. It has been a challenging project and we would not have been able to do it without the tools and techniques she taught us throughout this semester.</p>
 </div>
 <div id="citations" class="section level2" number="6.3">
 <h2><span class="header-section-number">6.3</span> Citations</h2>
+<p>“4.1 Seasonal Arima Models: Stat 510.” PennState: Statistics Online Courses, <a href="https://online.stat.psu.edu/stat510/lesson/4/4.1" class="uri">https://online.stat.psu.edu/stat510/lesson/4/4.1</a>.</p>
+<p>“Bayesian Time Series Modeling with Stan [R Package Bayesforecast Version 1.0.1].” The Comprehensive R Archive Network, Comprehensive R Archive Network (CRAN), 17 June 2021, <a href="https://cran.r-project.org/web/packages/bayesforecast/index.html" class="uri">https://cran.r-project.org/web/packages/bayesforecast/index.html</a>.</p>
+<p>“Forecasting: Principles and Practice (2nd Ed).” 8.9 Seasonal ARIMA Models, <a href="https://otexts.com/fpp2/seasonal-arima.html" class="uri">https://otexts.com/fpp2/seasonal-arima.html</a>.</p>
 <p>“Modeltime Integration.” Bayesmodels, <a href="https://albertoalmuinha.github.io/bayesmodels/articles/modeltime-integration.html" class="uri">https://albertoalmuinha.github.io/bayesmodels/articles/modeltime-integration.html</a>.</p>
 <p><em>S&amp;P 500 Companies - S&amp;P 500 Index Components by Market Cap</em>, <a href="https://www.slickcharts.com/sp500" class="uri">https://www.slickcharts.com/sp500</a></p>
 <p>“Yahoo Finance - Stock Market Live, Quotes, Business &amp; Finance News.” Yahoo! Finance, Yahoo!, <a href="https://finance.yahoo.com/" class="uri">https://finance.yahoo.com/</a>.</p>
@@ -218,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="code-appendix" class="section level2" number="6.4">
 <h2><span class="header-section-number">6.4</span> Code Appendix</h2>
 <p>To reproduce these results, the complete files and data are provided below:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="reflection.html#cb48-1" aria-hidden="true" tabindex="-1"></a>xfun<span class="sc">::</span><span class="fu">embed_files</span>(<span class="fu">c</span>(<span class="st">&#39;data.Rmd&#39;</span>, <span class="st">&#39;modeling.Rmd&#39;</span>, <span class="st">&#39;finalmodel.Rmd&#39;</span>, <span class="st">&#39;FINALDATASET.csv&#39;</span>, <span class="st">&#39;RandomCompnay.csv&#39;</span>, <span class="st">&#39;Diff_Inter_train_nick.rds&#39;</span>, <span class="st">&#39;Diff_inter_slope_train_nick.rds&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="reflection.html#cb58-1" aria-hidden="true" tabindex="-1"></a>xfun<span class="sc">::</span><span class="fu">embed_files</span>(<span class="fu">c</span>(<span class="st">&#39;data.Rmd&#39;</span>, <span class="st">&#39;modeling.Rmd&#39;</span>, <span class="st">&#39;finalmodel.Rmd&#39;</span>, <span class="st">&#39;FINALDATASET.csv&#39;</span>, <span class="st">&#39;RandomCompnay.csv&#39;</span>, <span class="st">&#39;Diff_Inter_train_nick.rds&#39;</span>, <span class="st">&#39;Diff_inter_slope_train_nick.rds&#39;</span>))</span></code></pre></div>
 
 </div>
 </div>

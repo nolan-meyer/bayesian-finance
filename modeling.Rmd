@@ -91,47 +91,41 @@ training <- anti_join(data_elimatedO, testing)
 ```
 
 ```{r, include=FALSE}
-#Custom Functions
-predict_model <- function(Company, Model){
-test_comp <- Company
-test_1 <- testing %>% 
-    filter(COMPANY == test_comp) %>% 
-  select(c("Sector","YEAR","Earnings_next_year_Scaled","EARNINGS_Scaled","EARNINGS_1_YEAR_AGO"))
-predict_next_year <- posterior_predict(
+predict_model<- function(Company, Model){
+  test_comp <- Company
+  test_1 <- testing %>% 
+    filter(COMPANY == test_comp)
+  predict_next_year <- posterior_predict(
   Model, 
   newdata = data.frame(test_1))
-predicted_median <- median(predict_next_year)
-
-most_recent_year <- test_1$YEAR + 1
+  most_recent_year <- testing %>% 
+   filter(COMPANY == test_comp) %>% 
+   filter(row_number()==1)
+most_recent_year <- most_recent_year$YEAR
 actual <- data %>% 
   filter(COMPANY == test_comp & YEAR == most_recent_year-1) %>% 
   select(c("EARNINGS_Scaled","YEAR"))
 actual <- actual$EARNINGS_Scaled
-
-
 randomsample <- sample_n(as.data.frame(predict_next_year), 750)
-
 graphing_predictions <- randomsample %>% 
   mutate(EARNINGS_Scaled = `1`,
          YEAR = most_recent_year) %>% 
-  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year-1) %>% 
+  add_row(EARNINGS_Scaled = actual, YEAR = most_recent_year -1) %>% 
   select(c("EARNINGS_Scaled","YEAR"))
-
 g <- data %>% 
   filter(COMPANY == test_comp) %>% 
   filter(YEAR <= most_recent_year) %>% 
   ggplot(aes(x= YEAR, y=EARNINGS_Scaled))+
   geom_point() +
   geom_line() +
-  geom_segment(data = graphing_predictions, aes(x = most_recent_year-1, 
+  geom_segment(data = graphing_predictions, aes(x = most_recent_year - 1, 
                    xend = most_recent_year,
                    y = actual, 
                    yend = EARNINGS_Scaled),
                alpha = 0.03,
                colour = "red")
-return(g)
+  return(g)
 }
-
 
 collect_metrics_pred <- function(Model, Datametric){
   predictions_mode_2 <- posterior_predict(
@@ -189,7 +183,27 @@ predictions_upper50 <- predictions_upper %>%
   mutate(upper50 = `20001`) %>% 
   select(upper50)
 
-Testing_with_metrics <- cbind(Datametric, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, meadian_predictions)
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .05),
+                    across(where(is.character),~"Lower90")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_Lower90 <- predictions_upper %>% 
+  mutate(Lower90 = `20001`) %>% 
+  select(Lower90)
+
+temp <- prediction_dataframe %>% 
+bind_rows(summarise(.,across(where(is.numeric),quantile, .95),
+                    across(where(is.character),~"Upper90")))
+predictions_upper <- tail(temp, 1)
+predictions_upper <- t(predictions_upper)
+predictions_upper<-as.data.frame(predictions_upper)
+predictions_Upper90 <- predictions_upper %>% 
+  mutate(Upper90 = `20001`) %>% 
+  select(Upper90)
+
+Testing_with_metrics <- cbind(Datametric, predictions_upper95, predictions_lower95,predictions_upper50,predictions_lower50, predictions_Lower90, predictions_Upper90, meadian_predictions)
 
 median_error <- Testing_with_metrics %>% 
   mutate(absDist = abs(median - Earnings_next_year_Scaled))
@@ -200,11 +214,15 @@ in_95 <- Testing_with_metrics %>%
 in_50 <- Testing_with_metrics %>% 
   mutate(Is_50 = (Earnings_next_year_Scaled < upper50) & (Earnings_next_year_Scaled > lower50))
 
+in_90 <- Testing_with_metrics %>% 
+  mutate(Is_90 = (Earnings_next_year_Scaled < Upper90) & (Earnings_next_year_Scaled > Lower90))
+
 med <- median(median_error$absDist)
 mean95 <- mean(in_95$Is_95)
 mean50 <- mean(in_50$Is_50)
-model_2_metrics <- matrix(c(med,mean95,mean50), ncol = 3)
-colnames(model_2_metrics) <- c("MAE","Within95","Within50")
+mean90 <- mean(in_90$Is_90)
+model_2_metrics <- matrix(c(med,mean95,mean50, mean90), ncol = 4)
+colnames(model_2_metrics) <- c("MAE","Within95","Within50", "Within90")
 model_2_metrics <- as.data.frame(model_2_metrics)
 return(model_2_metrics)
 }
@@ -304,7 +322,7 @@ eliminated %>%
   geom_smooth(method = "lm", se= FALSE, size = 0.5)
 ```
 
-We believe it makes sense to replace the global earnings coefficient with a company specific earnings coefficient. 
+Instead of using a global earnings slope coefficient, we decide to add a hierarchical layer so that company slope coefficients can learn from each other and yet have their own specific slope. If we have a universal slope coefficient, there will be a great deal of bias within our model.  
 
 
 ```{r}
@@ -358,9 +376,11 @@ pp_check(Diff_inter_train)
 pp_check(Diff_inter_slope_train)
 ```
 
-Several company earnings' on the right seem to be causing model fitness difficulties. Both models run into this problem. 
+Several company earnings’ on the right seem to be causing model fitness difficulties. Both models run into this problem, however the second model is able to capture more of the outliers on the right. 
 
-There seems to be little difference between the two models in terms of fitting the structure of earnings next year. We will now dive into predicting the accuracy of the models. 
+Prior to removing the extreme outliers in our dataset, the posterior predictive check for the models were worse as it left majority of the outliers uncovered. After filtering out for outliers, we evidently still have problems with both models.
+
+Next we will examine the predictive accuracy of the models. 
 
 
 ### How Accurate are the models? 
@@ -600,25 +620,3 @@ autoplot(forecast(object = sf_AAL, h = 12))
 
 For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030 as predicting a cyclical company's earnings could be a really difficult story. It did not show the similar pattern as Amazon. 
 
-
-**Coca Cola Prediction**
-
-```{r, results='hide'}
-KO <- data %>% 
-  filter(COMPANY == 'KO') %>% 
-  dplyr::select(EARNINGS_Scaled) %>% 
-  arrange(EARNINGS_Scaled)
-
-vector_KO <- KO$EARNINGS_Scaled
-
-myts_KO <- ts(vector_KO, start=c(1999), end=c(2021), frequency=1)
-
-sf_KO = stan_sarima(ts = myts_KO, order = c(1,1,1), seasonal = c(1,1,1),
-                  prior_mu0 = student(mu = 0,sd = 1,df = 7))
-```
-
-```{r}
-autoplot(forecast(object = sf_KO,h = 12))
-```
-
-For Coca Cola, it follows the same case as American Airlines. Even though the earnings increase over time, the model predicts that Ford's earning will stay relatively the same throughout the year from 2021 to 2030. It should be fairly clear as Coca Cola is a company that has developed for a really long period of time and can be considered to be a dividend company. With that in mind, it is fairly reasonable to see the earnings of the company to stay relatively the same after a period. 

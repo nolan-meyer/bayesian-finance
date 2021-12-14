@@ -168,7 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#is-this-the-right-model"><i class="fa fa-check"></i><b>3.4.1</b> Is this the right model?</a></li>
 <li class="chapter" data-level="3.4.2" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#how-accurate-are-the-models"><i class="fa fa-check"></i><b>3.4.2</b> How Accurate are the models?</a></li>
-<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents:</a></li>
+<li class="chapter" data-level="3.4.3" data-path="hierarchical-modeling.html"><a href="hierarchical-modeling.html#interpreting-coefficents"><i class="fa fa-check"></i><b>3.4.3</b> Interpreting Coefficents</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bayes-forecast.html"><a href="bayes-forecast.html"><i class="fa fa-check"></i><b>4</b> Bayes Forecast</a>
@@ -176,7 +176,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.1" data-path="bayes-forecast.html"><a href="bayes-forecast.html#model-parameters"><i class="fa fa-check"></i><b>4.1</b> Model Parameters</a></li>
 <li class="chapter" data-level="4.2" data-path="bayes-forecast.html"><a href="bayes-forecast.html#modeling"><i class="fa fa-check"></i><b>4.2</b> Modeling</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a></li>
+<li class="chapter" data-level="5" data-path="finalmodel.html"><a href="finalmodel.html"><i class="fa fa-check"></i><b>5</b> Final Model</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="finalmodel.html"><a href="finalmodel.html#model-structure-2"><i class="fa fa-check"></i><b>5.1</b> Model Structure</a></li>
+<li class="chapter" data-level="5.2" data-path="finalmodel.html"><a href="finalmodel.html#model-evaluation"><i class="fa fa-check"></i><b>5.2</b> Model Evaluation</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="finalmodel.html"><a href="finalmodel.html#diagnostic-plots"><i class="fa fa-check"></i><b>5.2.1</b> Diagnostic Plots</a></li>
+<li class="chapter" data-level="5.2.2" data-path="finalmodel.html"><a href="finalmodel.html#metrics"><i class="fa fa-check"></i><b>5.2.2</b> Metrics</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="finalmodel.html"><a href="finalmodel.html#summary"><i class="fa fa-check"></i><b>5.3</b> Summary</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="reflection.html"><a href="reflection.html"><i class="fa fa-check"></i><b>6</b> Reflection</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="reflection.html"><a href="reflection.html#next-steps"><i class="fa fa-check"></i><b>6.1</b> Next Steps</a></li>
@@ -256,21 +265,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="bayes-forecast.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf_AAL, <span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 <p>For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030 as predicting a cyclical company’s earnings could be a really difficult story. It did not show the similar pattern as Amazon.</p>
-<p><strong>Coca Cola Prediction</strong></p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="bayes-forecast.html#cb46-1" aria-hidden="true" tabindex="-1"></a>KO <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
-<span id="cb46-2"><a href="bayes-forecast.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;KO&#39;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-3"><a href="bayes-forecast.html#cb46-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-4"><a href="bayes-forecast.html#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
-<span id="cb46-5"><a href="bayes-forecast.html#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-6"><a href="bayes-forecast.html#cb46-6" aria-hidden="true" tabindex="-1"></a>vector_KO <span class="ot">&lt;-</span> KO<span class="sc">$</span>EARNINGS_Scaled</span>
-<span id="cb46-7"><a href="bayes-forecast.html#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-8"><a href="bayes-forecast.html#cb46-8" aria-hidden="true" tabindex="-1"></a>myts_KO <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector_KO, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
-<span id="cb46-9"><a href="bayes-forecast.html#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-10"><a href="bayes-forecast.html#cb46-10" aria-hidden="true" tabindex="-1"></a>sf_KO <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts_KO, <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">seasonal =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),</span>
-<span id="cb46-11"><a href="bayes-forecast.html#cb46-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">prior_mu0 =</span> <span class="fu">student</span>(<span class="at">mu =</span> <span class="dv">0</span>,<span class="at">sd =</span> <span class="dv">1</span>,<span class="at">df =</span> <span class="dv">7</span>))</span></code></pre></div>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="bayes-forecast.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf_KO,<span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
-<p>For Coca Cola, it follows the same case as American Airlines. Even though the earnings increase over time, the model predicts that Ford’s earning will stay relatively the same throughout the year from 2021 to 2030. It should be fairly clear as Coca Cola is a company that has developed for a really long period of time and can be considered to be a dividend company. With that in mind, it is fairly reasonable to see the earnings of the company to stay relatively the same after a period.</p>
 
 </div>
 </div>
