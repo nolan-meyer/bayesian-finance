@@ -428,7 +428,7 @@ Since we modeled based off different companies having different intercepts, it i
 
 Model 1 Shrinkage:
 
-```{r, echo=FALSE}
+```{r}
 set.seed(84732)
 COMPANY_chains <- Diff_inter_train %>%
   spread_draws(`(Intercept)`, b[,COMPANY]) %>%
@@ -448,7 +448,7 @@ ggplot(
 
 Model 2 Shrinkage:
 
-```{r, echo=FALSE}
+```{r}
 set.seed(84732)
 COMPANY_chains <- Diff_inter_slope_train %>%
   spread_draws(`(Intercept)`, b[,COMPANY]) %>%
@@ -466,7 +466,7 @@ ggplot(
 ```
 
 
-### Interpreting Coefficents:
+### Interpreting Coefficents
 
 ```{r}
 tidy(Diff_inter_train, effects = "fixed", conf.int = TRUE, conf.level = .80)
@@ -563,11 +563,11 @@ AMZN <- data %>%
   dplyr::select(EARNINGS_Scaled) %>% 
   arrange(EARNINGS_Scaled)
 
-vector <- AMZN$EARNINGS_Scaled
+vector_AMZN <- AMZN$EARNINGS_Scaled
 
-myts <- ts(vector, start=c(1999), end=c(2021), frequency=1)
+myts_AMZN <- ts(vector_AMZN, start=c(1999), end=c(2021), frequency=1)
 
-sf_AMZN = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
+sf_AMZN = stan_sarima(ts = myts_AMZN, order = c(1,1,1), seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 
@@ -586,11 +586,11 @@ AAL <- data %>%
   dplyr::select(EARNINGS_Scaled) %>% 
   arrange(EARNINGS_Scaled)
 
-vector <- AAL$EARNINGS_Scaled
+vector_AAL <- AAL$EARNINGS_Scaled
 
-myts <- ts(vector, start=c(1999), end=c(2021), frequency=1)
+myts_AAL <- ts(vector_AAL, start=c(1999), end=c(2021), frequency=1)
 
-sf_AAL = stan_sarima(ts = myts,order = c(1,1,1),seasonal = c(1,1,1),
+sf_AAL = stan_sarima(ts = myts_AAL, order = c(1,1,1), seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 
@@ -613,7 +613,7 @@ vector_KO <- KO$EARNINGS_Scaled
 
 myts_KO <- ts(vector_KO, start=c(1999), end=c(2021), frequency=1)
 
-sf_KO = stan_sarima(ts = myts_KO,order = c(1,1,1),seasonal = c(1,1,1),
+sf_KO = stan_sarima(ts = myts_KO, order = c(1,1,1), seasonal = c(1,1,1),
                   prior_mu0 = student(mu = 0,sd = 1,df = 7))
 ```
 

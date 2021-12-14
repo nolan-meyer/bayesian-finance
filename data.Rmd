@@ -173,22 +173,18 @@ This is much better as the data points are closer in proximity.
 
 After collecting the data, we then looked for the distribution of the companies within the S&P 500. The first plot we are going to create is the number of companies within the period: 
 
-```{r, echo=FALSE}
-#First Viz
+```{r}
 tabyl(data$YEAR) %>% 
   ggplot(aes(x= `data$YEAR`, y = n)) +
-  geom_line()+
-  xlab("")+
-  ylab("") + 
-  labs(title = "Number of Companies Within the Period") + 
+  geom_line() +
+  labs(title = "Number of Companies Within the Period", x = "", y = "") + 
   theme_minimal()
 ```
 
 As we see above, we have data for about 70% of the companies in the S&P 500 for the first year of our data, and by 2021 we have about every single company within the index. It is important for us to have data on as many companies as possible over this time period so that we can better capture trends and make more accurate models based on the data. 
 
 
-```{r, echo=FALSE}
-#Second Viz 
+```{r}
 sumUSA <- data %>% 
   group_by(YEAR) %>% 
   summarise(sumMarket_cap = sum(`MARKET.CAP`), 
@@ -197,14 +193,15 @@ sumUSA <- data %>%
             sumCASH = sum(CASH)) 
 
 sumUSA %>% 
-  ggplot(aes(x = YEAR, y = sumMarket_cap)) + geom_line() + theme_minimal() + labs(x = "Year") +
-  ggtitle("Market Cap within Dataset")
+  ggplot(aes(x = YEAR, y = sumMarket_cap)) + 
+  geom_line() + 
+  theme_minimal() + 
+  labs(x = "Year", y = "Sum of Market Cap", title = "Market Cap within Dataset")
 ```
 
 Next, we investigated how market cap, specifically the sum of all the companies' market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.
 
-```{r, echo=FALSE}
-#Third Viz
+```{r}
 temp <- data %>% 
   group_by(COMPANY) %>% 
   summarize(count = n(), 
@@ -212,9 +209,12 @@ temp <- data %>%
   filter(count == 23) %>% 
   arrange(desc(mean_MC)) %>% 
   head(50)
+
 temp <- temp$COMPANY
+
 data_2 <- data %>%  
   filter(COMPANY %in% temp) 
+
 data_2 %>% 
   ggplot(aes(y = EARNINGS, x= SALES, color = Sector))+
   geom_point(alpha = 0.20)+
@@ -225,8 +225,7 @@ data_2 %>%
 
 Our main objective with this project is to be able to accurately predict future earnings using metrics like sales, previous earnings, and other variables like the sector of the company. We found that overall, among the top 50 companies (based on market cap), there were positive relationships between earning and sales. This relationship varies based on the market sector, with IT having the most positive relationship, and Consumer Staples having the least positive relationship. This indicates to us that both sector and sales may be important predictors of earnings that we should explore using in our future models.
 
-```{r, fig.width=10, fig.height=8, echo=FALSE}
-#Fourth Viz
+```{r, fig.width=10, fig.height=8}
 p1 <- data %>% 
   ggplot(aes(y = Earnings_next_year_Scaled, x= EARNINGS_Scaled, color = Sector))+
   geom_point(alpha = 0.20)+
