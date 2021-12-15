@@ -20,6 +20,8 @@ interpreting-coefficents
 bayes-forecast
 model-parameters
 modeling
+accuracy
+company-predictions
 finalmodel
 model-structure-2
 model-evaluation
