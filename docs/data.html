@@ -215,8 +215,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="data-source" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Data Source</h2>
 <p>Our data includes financial information on companies in the S&amp;P 500 stock index from 1999-2021. This information was scraped from Yahoo Finance in November of 2021, and collected in a csv format for data analysis.</p>
-<p>To collect the data, first, we got the list of the current 500 S&amp;P companies from Slickchart (<a href="https://www.slickcharts.com/sp500" class="uri">https://www.slickcharts.com/sp500</a>). After having the list of the companies, we then moved on to the financials information of the listed companies on yahoo finance (<a href="https://finance.yahoo.com/" class="uri">https://finance.yahoo.com/</a>) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using BeautifulSoup library in Python and turned that into a CSV file.</p>
-<p>After getting the data, our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.</p>
+<p>To collect the data, first, we got the list of the current 500 S&amp;P companies from Slickchart (<a href="https://www.slickcharts.com/sp500" class="uri">https://www.slickcharts.com/sp500</a>). After having the list of the companies, we then moved on to the financial information of the listed companies on yahoo finance (<a href="https://finance.yahoo.com/" class="uri">https://finance.yahoo.com/</a>) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using the BeautifulSoup library in Python and turned that into a CSV file.</p>
+<p>Our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.</p>
 </div>
 <div id="variables" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Variables</h2>
@@ -280,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">2.3</span> Data Cleaning</h2>
 <div id="data-pre-processing" class="section level3" number="2.3.1">
 <h3><span class="header-section-number">2.3.1</span> Data Pre-Processing</h3>
-<p>First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.</p>
+<p>First, as earnings, cash, and other variables are really large, we have decided to divide them by 1 billion. The reason for this is to make it easier to interpret and to understand the model.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling Variables of Interest</span></span>
 <span id="cb1-2"><a href="data.html#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
 <span id="cb1-3"><a href="data.html#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EARNINGS_Scaled =</span> EARNINGS<span class="sc">/</span><span class="dv">1000000000</span>,</span>
@@ -303,7 +303,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="graphing-outliers" class="section level3" number="2.3.2">
 <h3><span class="header-section-number">2.3.2</span> Graphing Outliers</h3>
-<p>We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings the next year. Earnings_next_year_Scaled is the company’s earnings the next year. So Earnings_next_year_Scaled value of 1 for Company X in 2015 can be interpreted as 1 billion dollars in earnings in 2016.</p>
+<p>We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings next year. Earnings_next_year_Scaled is the company’s earnings the next year, so a value of 1 for Company X in 2015 can be interpreted as Company X had 1 billion dollars in earnings in 2016.</p>
 <p>We explore Earnings next year below:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graphing Outliers</span></span>
 <span id="cb3-2"><a href="data.html#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
@@ -312,15 +312,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="data.html#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> EARNINGS_Scaled, <span class="at">y=</span> Earnings_next_year_Scaled))<span class="sc">+</span></span>
 <span id="cb4-2"><a href="data.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
-<p>There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.</p>
-<p>We removed outliers by classifying them as one if they are outside the range of +/- (0.9 * IQR) (Interquartile Range).</p>
+<p>There are a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes many outliers, as predicting and modeling these posterior distributions would be quite difficult.</p>
+<p>We decided to remove outliers by classifying them as one if they are outside the range of +/- (0.9 * IQR) (Interquartile Range).</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data.html#cb5-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="fu">quantile</span>(data<span class="sc">$</span>Earnings_next_year_Scaled, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">25</span>, .<span class="dv">75</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb5-2"><a href="data.html#cb5-2" aria-hidden="true" tabindex="-1"></a>iqr <span class="ot">&lt;-</span> <span class="fu">IQR</span>(data<span class="sc">$</span>Earnings_next_year_Scaled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb5-3"><a href="data.html#cb5-3" aria-hidden="true" tabindex="-1"></a>up <span class="ot">&lt;-</span>  Q[<span class="dv">2</span>]<span class="sc">+</span>.<span class="dv">90</span><span class="sc">*</span>iqr <span class="co"># Upper Range  </span></span>
 <span id="cb5-4"><a href="data.html#cb5-4" aria-hidden="true" tabindex="-1"></a>low<span class="ot">&lt;-</span> Q[<span class="dv">1</span>]<span class="sc">-</span>.<span class="dv">90</span><span class="sc">*</span>iqr <span class="co"># Lower Range</span></span>
 <span id="cb5-5"><a href="data.html#cb5-5" aria-hidden="true" tabindex="-1"></a>eliminated<span class="ot">&lt;-</span> <span class="fu">subset</span>(data, data<span class="sc">$</span>Earnings_next_year_Scaled <span class="sc">&gt;</span> (low) <span class="sc">&amp;</span> data<span class="sc">$</span>Earnings_next_year_Scaled <span class="sc">&lt;</span> (up))</span>
 <span id="cb5-6"><a href="data.html#cb5-6" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="ot">&lt;-</span> eliminated</span></code></pre></div>
-<p>We graph the data points without outliers below:</p>
+<p>We graph the remaining data points without outliers below:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="data.html#cb6-1" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Earnings_next_year_Scaled)) <span class="sc">+</span> </span>
 <span id="cb6-2"><a href="data.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
@@ -332,7 +332,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="initial-explorations" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Initial Explorations</h2>
-<p>After collecting the data, we then looked for the distribution of the companies within the S&amp;P 500. The first plot we are going to create is the number of companies within the period:</p>
+<p>After cleaning the data, we then did some initial explorations like looking at the distribution of the companies within the S&amp;P 500. The first plot we are going to create is the number of companies within the given time period:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="data.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tabyl</span>(data<span class="sc">$</span>YEAR) <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="data.html#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">data$YEAR</span><span class="st">`</span>, <span class="at">y =</span> n)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="data.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
@@ -353,7 +353,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-11"><a href="data.html#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
 <span id="cb9-12"><a href="data.html#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Year&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Sum of Market Cap&quot;</span>, <span class="at">title =</span> <span class="st">&quot;Market Cap within Dataset&quot;</span>)</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>Next, we investigated how market cap, specifically the sum of all the companies’ market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.</p>
+<p>Next, we investigated how market cap, specifically the sum of all the companies’ market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and the emergence of COVID-19 respectively, both which led to decreases in the overall stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="data.html#cb10-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
 <span id="cb10-2"><a href="data.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
 <span id="cb10-3"><a href="data.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>(), </span>
@@ -410,7 +410,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-33"><a href="data.html#cb11-33" aria-hidden="true" tabindex="-1"></a>         <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">nrow =</span> <span class="dv">2</span>,</span>
 <span id="cb11-34"><a href="data.html#cb11-34" aria-hidden="true" tabindex="-1"></a>         <span class="at">common.legend =</span> <span class="cn">TRUE</span>, <span class="at">legend =</span> <span class="st">&quot;bottom&quot;</span>)</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
-<p>For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes.</p>
+<p>For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes. This indicates to us that more recent years (earnings 1 year ago, 2 years ago, etc.) will be more useful in our models than less recent years (earnings 4 years ago, 5 years ago, etc.)</p>
 
 </div>
 </div>

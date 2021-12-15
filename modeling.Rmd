@@ -71,7 +71,7 @@ data <- data %>%
 
 **Creating a testing set**
 
-Since we have time-series data, we created a testing set by sub-setting each company's 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy. 
+Since we have time-series data, we created a testing set by sub-setting each company's 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict the earnings next year for each company with the testing set and compare it with the actual values to help determine model accuracy. 
 
 ```{r, include=FALSE}
 Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)

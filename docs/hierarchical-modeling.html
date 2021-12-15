@@ -215,7 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="set-up" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Set Up</h2>
 <p><strong>Creating a testing set</strong></p>
-<p>Since we have time-series data, we created a testing set by sub-setting each company’s 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict earnings next year with the testing set and compare it with the actual values to help determine model accuracy.</p>
+<p>Since we have time-series data, we created a testing set by sub-setting each company’s 2nd to latest year. We left off the most recent year a company reports their earnings and created a testing set with this data, the training set includes all the other previous years. We will predict the earnings next year for each company with the testing set and compare it with the actual values to help determine model accuracy.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="hierarchical-modeling.html#cb12-1" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
 <span id="cb12-2"><a href="hierarchical-modeling.html#cb12-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-3"><a href="hierarchical-modeling.html#cb12-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>)</span>

@@ -4,9 +4,9 @@
 
 Our data includes financial information on companies in the S&P 500 stock index from 1999-2021. This information was scraped from Yahoo Finance in November of 2021, and collected in a csv format for data analysis.
 
-To collect the data, first, we got the list of the current 500 S&P companies from Slickchart (https://www.slickcharts.com/sp500). After having the list of the companies, we then moved on to the financials information of the listed companies on yahoo finance (https://finance.yahoo.com/) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using BeautifulSoup library in Python and turned that into a CSV file. 
+To collect the data, first, we got the list of the current 500 S&P companies from Slickchart (https://www.slickcharts.com/sp500). After having the list of the companies, we then moved on to the financial information of the listed companies on yahoo finance (https://finance.yahoo.com/) to get the metrics such as sales, earnings, cogs, stock price, and market sector. We then scraped the data using the BeautifulSoup library in Python and turned that into a CSV file. 
 
-After getting the data, our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.
+Our main goal is to analyze and model this data to better improve projections for a company’s future metrics, like earnings.
 
 
 
@@ -78,7 +78,7 @@ rand_data <- dplyr::select(data, c("YEAR", "COMPANY", "MARKET.CAP", "EARNINGS", 
 
 ### Data Pre-Processing
 
-First, as the earnings, cash and other variables are really large, we have decided to divide them by 1 billion. The reason for that is to make it easier to interpret and to understand the model.
+First, as earnings, cash, and other variables are really large, we have decided to divide them by 1 billion. The reason for this is to make it easier to interpret and to understand the model.
 
 ```{r}
 #Scaling Variables of Interest
@@ -129,7 +129,7 @@ rand_data <- rand_data %>%
 
 ### Graphing Outliers 
 
-We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings the next year. Earnings_next_year_Scaled is the company's earnings the next year. So Earnings_next_year_Scaled value of 1 for Company X in 2015 can be interpreted as 1 billion dollars in earnings in 2016. 
+We will do some more basic exploration regarding our data set, particularly our dependent variable of interest: Earnings next year. Earnings_next_year_Scaled is the company's earnings the next year, so a value of 1 for Company X in 2015 can be interpreted as Company X had 1 billion dollars in earnings in 2016. 
 
 We explore Earnings next year below: 
 
@@ -142,9 +142,9 @@ data %>% ggplot(aes(x = EARNINGS_Scaled, y= Earnings_next_year_Scaled))+
   geom_point()
 ```
 
-There is a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes outliers as predicting and modeling posterior distributions would be hard in the grand scheme.  
+There are a high number of outliers in our data, this is not ideal as we do not want to fit a model that includes many outliers, as predicting and modeling these posterior distributions would be quite difficult.  
 
-We removed outliers by classifying them as one if they are outside the range of +/- (0.9 * IQR) (Interquartile Range).
+We decided to remove outliers by classifying them as one if they are outside the range of +/- (0.9 * IQR) (Interquartile Range).
 
 ```{r}
 Q <- quantile(data$Earnings_next_year_Scaled, probs=c(.25, .75), na.rm = TRUE)
@@ -155,7 +155,7 @@ eliminated<- subset(data, data$Earnings_next_year_Scaled > (low) & data$Earnings
 data_elimatedO <- eliminated
 ```
 
-We graph the data points without outliers below:
+We graph the remaining data points without outliers below:
 
 ```{r}
 data_elimatedO %>% ggplot(aes(x = Earnings_next_year_Scaled)) + 
@@ -171,7 +171,7 @@ This is much better as the data points are closer in proximity.
 
 ## Initial Explorations
 
-After collecting the data, we then looked for the distribution of the companies within the S&P 500. The first plot we are going to create is the number of companies within the period: 
+After cleaning the data, we then did some initial explorations like looking at the distribution of the companies within the S&P 500. The first plot we are going to create is the number of companies within the given time period: 
 
 ```{r}
 tabyl(data$YEAR) %>% 
@@ -199,7 +199,7 @@ sumUSA %>%
   labs(x = "Year", y = "Sum of Market Cap", title = "Market Cap within Dataset")
 ```
 
-Next, we investigated how market cap, specifically the sum of all the companies' market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and COVID respectively, both which led to decreases in the stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.
+Next, we investigated how market cap, specifically the sum of all the companies' market caps, varied from year to year. By grouping by year, we were able to easily combine each companies market cap together to create the plot above. This plot highlights trends in the overall market, we see a general increase over time in market cap, with sharp decreases around 2008 and 2020. Those two years align with the housing market crash and the emergence of COVID-19 respectively, both which led to decreases in the overall stock market. By identifying trends in the overall market, we may have a better idea about how individual companies may perform.
 
 ```{r}
 temp <- data %>% 
@@ -262,5 +262,5 @@ ggarrange(p1, p2, p3, p4, p5,
          common.legend = TRUE, legend = "bottom")
 ```
 
-For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes. 
+For most sectors, it appears that the farther back we go, the flatter the relationship between Earnings and past earnings is. If we plot earnings next year with earnings four years ago, we will see that almost all sectors have different slopes. This indicates to us that more recent years (earnings 1 year ago, 2 years ago, etc.) will be more useful in our models than less recent years (earnings 4 years ago, 5 years ago, etc.)
 
