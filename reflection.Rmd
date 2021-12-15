@@ -2,6 +2,8 @@
 
 ## Next Steps
 
+We would love to have more time to explore SARIMA models in bayesforecast, as well as improve our hierarchical models as well. With bayesforcast, this was a new package to us which took some time to learn, and there's still more to explore that we weren't able to get to. For our hierarchical models, they had some troubles dealing with outliers and the volatility of the financial world. We would like to explore more models in the future, possibly with more or different predictors, however these models took hours to run and a time constraint limited the amount of models we could try. Future models could become more accurate at predicting future earnings for companies.
+
 ## Acknowledgements
 
 For our project, we want to thank Dr. Alicia Johnson for teaching us a lot of useful knowledge about Bayesian Statistics. Moreover, Dr. Alicia Johnson has given us a ton of feedback, and helped us through all the difficulties we have encountered. It has been a challenging project and we would not have been able to do it without the tools and techniques she taught us throughout this semester.
