@@ -315,3 +315,9 @@ There is a semi strong correlation between the Company Specific $\beta_{0j}$ and
 
 ## Summary
 
+Our model demonstrates that a company's future earnings...
+
+Pros: 
+
+Cons:
+

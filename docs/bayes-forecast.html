@@ -216,14 +216,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="bayes-forecast" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Bayes Forecast</h1>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="bayes-forecast.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesforecast)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="bayes-forecast.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesforecast)</span></code></pre></div>
 <p><strong>Bayesian Forecast SARIMA:</strong></p>
 <p>In our last model specification, we decided to use the bayesforecast package. In particular we are fitting a SARIMA model in Stan.</p>
 <p>SARIMA stands for seasonal auto-regressive integrated moving average. This is an extension of ARIMA and is therefore more robust as it is able to support seasonal data.</p>
 <p>ARIMA is a method that combines both auto-regressive methods and moving averages- it is widely used on time series data in attempts to predict future values. There are four components that explain time series data, trend, seasonality, irregularity, and cyclic components.</p>
 <p><strong>Reason to use Bayesian forecast:</strong></p>
 <p>The reason that we are using Bayesian forecast is that it accounts for seasonal order, trends, or seasonality, which could help make the model more accurate. Moreover, Bayesian Forecast can also automate the process within the stan_sarima and auto_arima, in which the model will see which order, seasonal, or trend, fits with certain companies and variables.</p>
-<p>For Bayesian Forecast, we will first try to see the accuracy rate of the model compared to our complex hierarchical model. After that, using Bayesian Forecast, we will try to see what are the predicted earnings after ten years for Amazon (symbol: “AMZN”) and American Airlines (symbol: “AAL”).</p>
+<p>For Bayesian Forecast, we will first try to see the accuracy rate of the model compared to our complex hierarchical model. After that, using Bayesian Forecast, we will try to see what are the predicted earnings after ten years for Amazon (symbol: “AMZN”), Microsoft (symbol: “MSFT”), and American Airlines (symbol: “AAL”).</p>
 <div id="model-parameters" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Model Parameters</h2>
 <p>Here are the parameters for an ARIMA model:</p>
@@ -244,124 +244,146 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="accuracy" class="section level3" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> Accuracy</h3>
 <p>In order to predict next year’s earnings for every company, as it acts like a time series model, we need to have companies that have at least 3 years of earnings. We first eliminate the companies that have only 2 years of earnings in this dataset, then we will create a function to find the earnings for the next year of these companies.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="bayes-forecast.html#cb42-1" aria-hidden="true" tabindex="-1"></a>COMPANY_Names <span class="ot">&lt;-</span> data_elimatedO<span class="sc">$</span>COMPANY</span>
-<span id="cb42-2"><a href="bayes-forecast.html#cb42-2" aria-hidden="true" tabindex="-1"></a>unique_COMPANY <span class="ot">&lt;-</span> <span class="fu">unique</span>(COMPANY_Names)</span>
-<span id="cb42-3"><a href="bayes-forecast.html#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-4"><a href="bayes-forecast.html#cb42-4" aria-hidden="true" tabindex="-1"></a>unique_COMPANY</span>
-<span id="cb42-5"><a href="bayes-forecast.html#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-6"><a href="bayes-forecast.html#cb42-6" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="sc">%&gt;%</span> </span>
-<span id="cb42-7"><a href="bayes-forecast.html#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-8"><a href="bayes-forecast.html#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-9"><a href="bayes-forecast.html#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&lt;=</span> <span class="dv">2</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="bayes-forecast.html#cb43-1" aria-hidden="true" tabindex="-1"></a>unique_COMPANY_2 <span class="ot">&lt;-</span>unique_COMPANY</span>
-<span id="cb43-2"><a href="bayes-forecast.html#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="bayes-forecast.html#cb43-3" aria-hidden="true" tabindex="-1"></a>unique_COMPANY_2 <span class="ot">=</span> unique_COMPANY_2[<span class="fu">factor</span>(unique_COMPANY_2) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ABBV&quot;</span>,<span class="st">&quot;AMCR&quot;</span> ,<span class="st">&quot;BAC&quot;</span>  ,<span class="st">&quot;CARR&quot;</span>, <span class="st">&quot;CTVA&quot;</span>,  <span class="st">&quot;DOW&quot;</span>,   <span class="st">&quot;FB&quot;</span>, <span class="st">&quot;GOOG&quot;</span>,  <span class="st">&quot;GOOGL&quot;</span>, <span class="st">&quot;INTC&quot;</span>,  <span class="st">&quot;JNJ&quot;</span>, <span class="st">&quot;OTIS&quot;</span>, <span class="st">&quot;PSX&quot;</span>, <span class="st">&quot;FOX&quot;</span>, <span class="st">&quot;FOXA&quot;</span>, <span class="st">&quot;HD&quot;</span>, <span class="st">&quot;KHC&quot;</span>, <span class="st">&quot;LYB&quot;</span>, <span class="st">&quot;MDLZ&quot;</span>, <span class="st">&quot;MRK&quot;</span>, <span class="st">&quot;MRNA&quot;</span>, <span class="st">&quot;OTIS&quot;</span>, <span class="st">&quot;PEP&quot;</span>, <span class="st">&quot;JPM&quot;</span>) <span class="sc">==</span> <span class="cn">FALSE</span>] </span>
-<span id="cb43-4"><a href="bayes-forecast.html#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-5"><a href="bayes-forecast.html#cb43-5" aria-hidden="true" tabindex="-1"></a>total_number_of_COMPANY <span class="ot">&lt;-</span> <span class="fu">length</span>(unique_COMPANY)</span>
-<span id="cb43-6"><a href="bayes-forecast.html#cb43-6" aria-hidden="true" tabindex="-1"></a>total_number_of_COMPANY_2 <span class="ot">&lt;-</span> <span class="fu">length</span>(unique_COMPANY_2)</span></code></pre></div>
-<p>After finding all of the desirable companies, we are left with 464 companies. We then created a function in order to predict the earnings next year for these 464 companies using Bayesian Forecast:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="bayes-forecast.html#cb44-1" aria-hidden="true" tabindex="-1"></a>point <span class="ot">&lt;-</span> high <span class="ot">&lt;-</span> low <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">464</span>)</span>
-<span id="cb44-2"><a href="bayes-forecast.html#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="bayes-forecast.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span> total_number_of_COMPANY_2) {</span>
-<span id="cb44-4"><a href="bayes-forecast.html#cb44-4" aria-hidden="true" tabindex="-1"></a>  company <span class="ot">&lt;-</span> unique_COMPANY_2[i]</span>
-<span id="cb44-5"><a href="bayes-forecast.html#cb44-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb44-6"><a href="bayes-forecast.html#cb44-6" aria-hidden="true" tabindex="-1"></a>  data_new <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
-<span id="cb44-7"><a href="bayes-forecast.html#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(COMPANY <span class="sc">==</span> company) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-8"><a href="bayes-forecast.html#cb44-8" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled, YEAR) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-9"><a href="bayes-forecast.html#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">min_year =</span> <span class="fu">min</span>(YEAR), </span>
-<span id="cb44-10"><a href="bayes-forecast.html#cb44-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_year =</span> <span class="fu">max</span>(YEAR)) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-11"><a href="bayes-forecast.html#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
-<span id="cb44-12"><a href="bayes-forecast.html#cb44-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb44-13"><a href="bayes-forecast.html#cb44-13" aria-hidden="true" tabindex="-1"></a>  min_year <span class="ot">&lt;-</span> data_new<span class="sc">$</span>min_year[<span class="dv">1</span>]</span>
-<span id="cb44-14"><a href="bayes-forecast.html#cb44-14" aria-hidden="true" tabindex="-1"></a>  max_year <span class="ot">&lt;-</span> data_new<span class="sc">$</span>max_year[<span class="dv">1</span>]</span>
-<span id="cb44-15"><a href="bayes-forecast.html#cb44-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-16"><a href="bayes-forecast.html#cb44-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb44-17"><a href="bayes-forecast.html#cb44-17" aria-hidden="true" tabindex="-1"></a>  vector <span class="ot">&lt;-</span> data_new<span class="sc">$</span>EARNINGS_Scaled</span>
-<span id="cb44-18"><a href="bayes-forecast.html#cb44-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-19"><a href="bayes-forecast.html#cb44-19" aria-hidden="true" tabindex="-1"></a>  myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(min_year), <span class="at">end=</span><span class="fu">c</span>(max_year), <span class="at">frequency=</span><span class="dv">1</span>)</span>
-<span id="cb44-20"><a href="bayes-forecast.html#cb44-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-21"><a href="bayes-forecast.html#cb44-21" aria-hidden="true" tabindex="-1"></a>  sf1 <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts, <span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span>
-<span id="cb44-22"><a href="bayes-forecast.html#cb44-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb44-23"><a href="bayes-forecast.html#cb44-23" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">=</span> <span class="fu">forecast</span>(<span class="at">object =</span> sf1,<span class="at">h =</span> <span class="dv">1</span>)</span>
-<span id="cb44-24"><a href="bayes-forecast.html#cb44-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb44-25"><a href="bayes-forecast.html#cb44-25" aria-hidden="true" tabindex="-1"></a>  point[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>mean</span>
-<span id="cb44-26"><a href="bayes-forecast.html#cb44-26" aria-hidden="true" tabindex="-1"></a>  low[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>lower[<span class="dv">2</span>]</span>
-<span id="cb44-27"><a href="bayes-forecast.html#cb44-27" aria-hidden="true" tabindex="-1"></a>  high[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>upper[<span class="dv">2</span>]</span>
-<span id="cb44-28"><a href="bayes-forecast.html#cb44-28" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-29"><a href="bayes-forecast.html#cb44-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-30"><a href="bayes-forecast.html#cb44-30" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(unique_COMPANY_2[<span class="dv">1</span><span class="sc">:</span> total_number_of_COMPANY_2], point, low, high)</span>
-<span id="cb44-31"><a href="bayes-forecast.html#cb44-31" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
-<p>After having the dataset, we then combine the function with the actual dataset in order to see the accuracy rate for these models in which it predicts the earnings next year for these companies.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="bayes-forecast.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(df) </span>
-<span id="cb45-2"><a href="bayes-forecast.html#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-3"><a href="bayes-forecast.html#cb45-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb45-4"><a href="bayes-forecast.html#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">COMPANY =</span> <span class="st">`</span><span class="at">unique_COMPANY_2.1.total_number_of_COMPANY_2.</span><span class="st">`</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb45-5"><a href="bayes-forecast.html#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span> <span class="st">`</span><span class="at">unique_COMPANY_2.1.total_number_of_COMPANY_2.</span><span class="st">`</span>)</span>
-<span id="cb45-6"><a href="bayes-forecast.html#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-7"><a href="bayes-forecast.html#cb45-7" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
-<span id="cb45-8"><a href="bayes-forecast.html#cb45-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
-<span id="cb45-9"><a href="bayes-forecast.html#cb45-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb45-10"><a href="bayes-forecast.html#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-11"><a href="bayes-forecast.html#cb45-11" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(data_elimatedO, testing)</span>
-<span id="cb45-12"><a href="bayes-forecast.html#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-13"><a href="bayes-forecast.html#cb45-13" aria-hidden="true" tabindex="-1"></a>testing</span>
-<span id="cb45-14"><a href="bayes-forecast.html#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-15"><a href="bayes-forecast.html#cb45-15" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> df, <span class="at">y =</span> testing, <span class="at">by =</span> <span class="st">&quot;COMPANY&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb45-16"><a href="bayes-forecast.html#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-17"><a href="bayes-forecast.html#cb45-17" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns</span>
-<span id="cb45-18"><a href="bayes-forecast.html#cb45-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-19"><a href="bayes-forecast.html#cb45-19" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> bayesian_forecast_earnigns <span class="sc">%&gt;%</span> </span>
-<span id="cb45-20"><a href="bayes-forecast.html#cb45-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COMPANY, point, low, high, YEAR, Earnings_next_year_Scaled)</span>
-<span id="cb45-21"><a href="bayes-forecast.html#cb45-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-22"><a href="bayes-forecast.html#cb45-22" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns</span>
-<span id="cb45-23"><a href="bayes-forecast.html#cb45-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-24"><a href="bayes-forecast.html#cb45-24" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(bayesian_forecast_earnigns, <span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="bayes-forecast.html#cb46-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
-<p>After combining the two datasets, we then evaluate the accuracy rate for the Bayesian forecast model:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="bayes-forecast.html#cb47-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> bayesian_forecast_earnigns <span class="sc">%&gt;%</span> </span>
-<span id="cb47-2"><a href="bayes-forecast.html#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">median_dist =</span> <span class="fu">abs</span>(point <span class="sc">-</span> Earnings_next_year_Scaled)) <span class="sc">%&gt;%</span> </span>
-<span id="cb47-3"><a href="bayes-forecast.html#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Is_90 =</span> (Earnings_next_year_Scaled <span class="sc">&gt;=</span> low) <span class="sc">&amp;</span> (Earnings_next_year_Scaled <span class="sc">&lt;=</span> high))</span>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="bayes-forecast.html#cb46-1" aria-hidden="true" tabindex="-1"></a>COMPANY_Names <span class="ot">&lt;-</span> data_elimatedO<span class="sc">$</span>COMPANY</span>
+<span id="cb46-2"><a href="bayes-forecast.html#cb46-2" aria-hidden="true" tabindex="-1"></a>unique_COMPANY <span class="ot">&lt;-</span> <span class="fu">unique</span>(COMPANY_Names)</span>
+<span id="cb46-3"><a href="bayes-forecast.html#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="bayes-forecast.html#cb46-4" aria-hidden="true" tabindex="-1"></a>unique_COMPANY</span>
+<span id="cb46-5"><a href="bayes-forecast.html#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="bayes-forecast.html#cb46-6" aria-hidden="true" tabindex="-1"></a>data_elimatedO <span class="sc">%&gt;%</span> </span>
+<span id="cb46-7"><a href="bayes-forecast.html#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-8"><a href="bayes-forecast.html#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-9"><a href="bayes-forecast.html#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&lt;=</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="bayes-forecast.html#cb47-1" aria-hidden="true" tabindex="-1"></a>unique_COMPANY_2 <span class="ot">&lt;-</span>unique_COMPANY</span>
+<span id="cb47-2"><a href="bayes-forecast.html#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="bayes-forecast.html#cb47-3" aria-hidden="true" tabindex="-1"></a>unique_COMPANY_2 <span class="ot">=</span> unique_COMPANY_2[<span class="fu">factor</span>(unique_COMPANY_2) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ABBV&quot;</span>,<span class="st">&quot;AMCR&quot;</span> ,<span class="st">&quot;BAC&quot;</span>  ,<span class="st">&quot;CARR&quot;</span>, <span class="st">&quot;CTVA&quot;</span>,  <span class="st">&quot;DOW&quot;</span>,   <span class="st">&quot;FB&quot;</span>, <span class="st">&quot;GOOG&quot;</span>,  <span class="st">&quot;GOOGL&quot;</span>, <span class="st">&quot;INTC&quot;</span>,  <span class="st">&quot;JNJ&quot;</span>, <span class="st">&quot;OTIS&quot;</span>, <span class="st">&quot;PSX&quot;</span>, <span class="st">&quot;FOX&quot;</span>, <span class="st">&quot;FOXA&quot;</span>, <span class="st">&quot;HD&quot;</span>, <span class="st">&quot;KHC&quot;</span>, <span class="st">&quot;LYB&quot;</span>, <span class="st">&quot;MDLZ&quot;</span>, <span class="st">&quot;MRK&quot;</span>, <span class="st">&quot;MRNA&quot;</span>, <span class="st">&quot;OTIS&quot;</span>, <span class="st">&quot;PEP&quot;</span>, <span class="st">&quot;JPM&quot;</span>) <span class="sc">==</span> <span class="cn">FALSE</span>] </span>
 <span id="cb47-4"><a href="bayes-forecast.html#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-5"><a href="bayes-forecast.html#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(bayesian_forecast_earnigns<span class="sc">$</span>median_dist)</span></code></pre></div>
+<span id="cb47-5"><a href="bayes-forecast.html#cb47-5" aria-hidden="true" tabindex="-1"></a>total_number_of_COMPANY <span class="ot">&lt;-</span> <span class="fu">length</span>(unique_COMPANY)</span>
+<span id="cb47-6"><a href="bayes-forecast.html#cb47-6" aria-hidden="true" tabindex="-1"></a>total_number_of_COMPANY_2 <span class="ot">&lt;-</span> <span class="fu">length</span>(unique_COMPANY_2)</span></code></pre></div>
+<p>After finding all of the desirable companies, we are left with 464 companies. We then created a function in order to predict the earnings next year for these 464 companies using Bayesian Forecast:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="bayes-forecast.html#cb48-1" aria-hidden="true" tabindex="-1"></a>point <span class="ot">&lt;-</span> high <span class="ot">&lt;-</span> low <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">464</span>)</span>
+<span id="cb48-2"><a href="bayes-forecast.html#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="bayes-forecast.html#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span> total_number_of_COMPANY_2) {</span>
+<span id="cb48-4"><a href="bayes-forecast.html#cb48-4" aria-hidden="true" tabindex="-1"></a>  company <span class="ot">&lt;-</span> unique_COMPANY_2[i]</span>
+<span id="cb48-5"><a href="bayes-forecast.html#cb48-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-6"><a href="bayes-forecast.html#cb48-6" aria-hidden="true" tabindex="-1"></a>  data_new <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
+<span id="cb48-7"><a href="bayes-forecast.html#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(COMPANY <span class="sc">==</span> company) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-8"><a href="bayes-forecast.html#cb48-8" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled, YEAR) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-9"><a href="bayes-forecast.html#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">min_year =</span> <span class="fu">min</span>(YEAR), </span>
+<span id="cb48-10"><a href="bayes-forecast.html#cb48-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_year =</span> <span class="fu">max</span>(YEAR)) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-11"><a href="bayes-forecast.html#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
+<span id="cb48-12"><a href="bayes-forecast.html#cb48-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-13"><a href="bayes-forecast.html#cb48-13" aria-hidden="true" tabindex="-1"></a>  min_year <span class="ot">&lt;-</span> data_new<span class="sc">$</span>min_year[<span class="dv">1</span>]</span>
+<span id="cb48-14"><a href="bayes-forecast.html#cb48-14" aria-hidden="true" tabindex="-1"></a>  max_year <span class="ot">&lt;-</span> data_new<span class="sc">$</span>max_year[<span class="dv">1</span>]</span>
+<span id="cb48-15"><a href="bayes-forecast.html#cb48-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-16"><a href="bayes-forecast.html#cb48-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-17"><a href="bayes-forecast.html#cb48-17" aria-hidden="true" tabindex="-1"></a>  vector <span class="ot">&lt;-</span> data_new<span class="sc">$</span>EARNINGS_Scaled</span>
+<span id="cb48-18"><a href="bayes-forecast.html#cb48-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-19"><a href="bayes-forecast.html#cb48-19" aria-hidden="true" tabindex="-1"></a>  myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(min_year), <span class="at">end=</span><span class="fu">c</span>(max_year), <span class="at">frequency=</span><span class="dv">1</span>)</span>
+<span id="cb48-20"><a href="bayes-forecast.html#cb48-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-21"><a href="bayes-forecast.html#cb48-21" aria-hidden="true" tabindex="-1"></a>  sf1 <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts, <span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span>
+<span id="cb48-22"><a href="bayes-forecast.html#cb48-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-23"><a href="bayes-forecast.html#cb48-23" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">=</span> <span class="fu">forecast</span>(<span class="at">object =</span> sf1,<span class="at">h =</span> <span class="dv">1</span>)</span>
+<span id="cb48-24"><a href="bayes-forecast.html#cb48-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-25"><a href="bayes-forecast.html#cb48-25" aria-hidden="true" tabindex="-1"></a>  point[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>mean</span>
+<span id="cb48-26"><a href="bayes-forecast.html#cb48-26" aria-hidden="true" tabindex="-1"></a>  low[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>lower[<span class="dv">2</span>]</span>
+<span id="cb48-27"><a href="bayes-forecast.html#cb48-27" aria-hidden="true" tabindex="-1"></a>  high[i] <span class="ot">&lt;-</span> result<span class="sc">$</span>upper[<span class="dv">2</span>]</span>
+<span id="cb48-28"><a href="bayes-forecast.html#cb48-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb48-29"><a href="bayes-forecast.html#cb48-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-30"><a href="bayes-forecast.html#cb48-30" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(unique_COMPANY_2[<span class="dv">1</span><span class="sc">:</span> total_number_of_COMPANY_2], point, low, high)</span>
+<span id="cb48-31"><a href="bayes-forecast.html#cb48-31" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<p>After having the dataset, we then combine the function with the actual dataset in order to see the accuracy rate for these models in which it predicts the earnings next year for these companies.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="bayes-forecast.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(df) </span>
+<span id="cb49-2"><a href="bayes-forecast.html#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="bayes-forecast.html#cb49-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb49-4"><a href="bayes-forecast.html#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">COMPANY =</span> <span class="st">`</span><span class="at">unique_COMPANY_2.1.total_number_of_COMPANY_2.</span><span class="st">`</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-5"><a href="bayes-forecast.html#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span> <span class="st">`</span><span class="at">unique_COMPANY_2.1.total_number_of_COMPANY_2.</span><span class="st">`</span>)</span>
+<span id="cb49-6"><a href="bayes-forecast.html#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="bayes-forecast.html#cb49-7" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> data_elimatedO <span class="sc">%&gt;%</span> </span>
+<span id="cb49-8"><a href="bayes-forecast.html#cb49-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(COMPANY) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-9"><a href="bayes-forecast.html#cb49-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb49-10"><a href="bayes-forecast.html#cb49-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-11"><a href="bayes-forecast.html#cb49-11" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(data_elimatedO, testing)</span>
+<span id="cb49-12"><a href="bayes-forecast.html#cb49-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-13"><a href="bayes-forecast.html#cb49-13" aria-hidden="true" tabindex="-1"></a>testing</span>
+<span id="cb49-14"><a href="bayes-forecast.html#cb49-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-15"><a href="bayes-forecast.html#cb49-15" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> df, <span class="at">y =</span> testing, <span class="at">by =</span> <span class="st">&quot;COMPANY&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-16"><a href="bayes-forecast.html#cb49-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-17"><a href="bayes-forecast.html#cb49-17" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns</span>
+<span id="cb49-18"><a href="bayes-forecast.html#cb49-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-19"><a href="bayes-forecast.html#cb49-19" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> bayesian_forecast_earnigns <span class="sc">%&gt;%</span> </span>
+<span id="cb49-20"><a href="bayes-forecast.html#cb49-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COMPANY, point, low, high, YEAR, Earnings_next_year_Scaled)</span>
+<span id="cb49-21"><a href="bayes-forecast.html#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-22"><a href="bayes-forecast.html#cb49-22" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns</span>
+<span id="cb49-23"><a href="bayes-forecast.html#cb49-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-24"><a href="bayes-forecast.html#cb49-24" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(bayesian_forecast_earnigns, <span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="bayes-forecast.html#cb50-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
+<p>After combining the two datasets, we then evaluate the accuracy rate for the Bayesian forecast model:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="bayes-forecast.html#cb51-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> bayesian_forecast_earnigns <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="bayes-forecast.html#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">median_dist =</span> <span class="fu">abs</span>(point <span class="sc">-</span> Earnings_next_year_Scaled)) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="bayes-forecast.html#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Is_90 =</span> (Earnings_next_year_Scaled <span class="sc">&gt;=</span> low) <span class="sc">&amp;</span> (Earnings_next_year_Scaled <span class="sc">&lt;=</span> high))</span>
+<span id="cb51-4"><a href="bayes-forecast.html#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="bayes-forecast.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(bayesian_forecast_earnigns<span class="sc">$</span>median_dist)</span></code></pre></div>
 <pre><code>## [1] 0.6589985</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="bayes-forecast.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(bayesian_forecast_earnigns<span class="sc">$</span>Is_90)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="bayes-forecast.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(bayesian_forecast_earnigns<span class="sc">$</span>Is_90)</span></code></pre></div>
 <pre><code>## [1] 0.5150862</code></pre>
 <p>Overall, as we can see, the accuracy is not really high. The distance from the median is 0.6589, which shows that a company’s earnings will be off by around 0.6589 billions, which is a fairly high number. Moreover, only 51.5% of the companies is within the 90% percentile, which is a relatively small number. Overall, the model performs worse than the hierarchical model on section 3.</p>
 </div>
 <div id="company-predictions" class="section level3" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Company Predictions</h3>
-<p>After creating the model, we will then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: “AMZN”) and American Airlines (symbol: “AAL”).</p>
+<p>After creating the model, we will then move on to predict the earnings of the future year for the companies. The companies we are going to predict will be Amazon (symbol: “AMZN”), Microsoft (symbol: “MSFT”), and American Airlines (symbol: “AAL”).</p>
 <p><strong>Amazon Prediction</strong></p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="bayes-forecast.html#cb51-1" aria-hidden="true" tabindex="-1"></a>AMZN <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
-<span id="cb51-2"><a href="bayes-forecast.html#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;AMZN&#39;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-3"><a href="bayes-forecast.html#cb51-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-4"><a href="bayes-forecast.html#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
-<span id="cb51-5"><a href="bayes-forecast.html#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-6"><a href="bayes-forecast.html#cb51-6" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> AMZN<span class="sc">$</span>EARNINGS_Scaled</span>
-<span id="cb51-7"><a href="bayes-forecast.html#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="bayes-forecast.html#cb51-8" aria-hidden="true" tabindex="-1"></a>myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
-<span id="cb51-9"><a href="bayes-forecast.html#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-10"><a href="bayes-forecast.html#cb51-10" aria-hidden="true" tabindex="-1"></a>sf1 <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts,<span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">seasonal =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),</span>
-<span id="cb51-11"><a href="bayes-forecast.html#cb51-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">prior_mu0 =</span> <span class="fu">student</span>(<span class="at">mu =</span> <span class="dv">0</span>,<span class="at">sd =</span> <span class="dv">1</span>,<span class="at">df =</span> <span class="dv">7</span>), <span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="bayes-forecast.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1, <span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
-<p><img src="series_files/figure-html/fig3-1.png" width="672" /></p>
-<p>First, for Amazon, we see that the earnings are predicted to increase from 2021 to 2030, moving from 21 billion to around 38 billion in 2030. However, we can see that the prediction states that the earnings growth tends to slow down over time over the period.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="bayes-forecast.html#cb55-1" aria-hidden="true" tabindex="-1"></a>AMZN <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="bayes-forecast.html#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;AMZN&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-3"><a href="bayes-forecast.html#cb55-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-4"><a href="bayes-forecast.html#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
+<span id="cb55-5"><a href="bayes-forecast.html#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="bayes-forecast.html#cb55-6" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> AMZN<span class="sc">$</span>EARNINGS_Scaled</span>
+<span id="cb55-7"><a href="bayes-forecast.html#cb55-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-8"><a href="bayes-forecast.html#cb55-8" aria-hidden="true" tabindex="-1"></a>myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
+<span id="cb55-9"><a href="bayes-forecast.html#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-10"><a href="bayes-forecast.html#cb55-10" aria-hidden="true" tabindex="-1"></a>sf1_Amazon <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts,<span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">seasonal =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),</span>
+<span id="cb55-11"><a href="bayes-forecast.html#cb55-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">prior_mu0 =</span> <span class="fu">student</span>(<span class="at">mu =</span> <span class="dv">0</span>,<span class="at">sd =</span> <span class="dv">1</span>,<span class="at">df =</span> <span class="dv">7</span>), <span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="bayes-forecast.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_residuals</span>(sf1_Amazon)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="bayes-forecast.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1_Amazon,<span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-54-2.png" width="672" /></p>
+<p>First, for Amazon, we could see that the earnings are predicted to increase from 2021 to 2030, moving from 21 billions to around 38 billions in 2030. However, we could see that the prediction states that the earnings growth tends to slow down over time over the period.</p>
+<p>Looking at the expected values of the posterior predictive errors, prior to 2016, Amazon’s residuals seem to be consistently sitting at 0. A concern to this is how stagnant the residual line is, as a robust model will have a more varied fluctuation around 0. This may be the case that we only have around 20 observations. There is a general rule of thumb that for any ARIMA model, we should have at least 50, but preferably more than 100 observations to feed into the model. Otherwise we will not be able to pick up important features in our data (Box and Tiao 1975).</p>
+<p>Looking at the auto-correlation function, the most noticeable spike in the ACF plot is 2 years. The ACF plot tells us how correlated the present value is with past values or lagged values. This means that the most correlated value to the present value is 2 years afterwords. In this specific context, Amazon’s present day earnings in billions is most correlated with amazon’s earnings in billions two years ago.</p>
+<p>The information in the PACF plot, the partial auto-correlation function, does the same as the ACF plot but rather compares residual values instead of actual values.</p>
+<p><strong>Microsoft Prediction</strong></p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="bayes-forecast.html#cb58-1" aria-hidden="true" tabindex="-1"></a>MSFT <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb58-2"><a href="bayes-forecast.html#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;MSFT&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb58-3"><a href="bayes-forecast.html#cb58-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
+<span id="cb58-4"><a href="bayes-forecast.html#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
+<span id="cb58-5"><a href="bayes-forecast.html#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-6"><a href="bayes-forecast.html#cb58-6" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> MSFT<span class="sc">$</span>EARNINGS_Scaled</span>
+<span id="cb58-7"><a href="bayes-forecast.html#cb58-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-8"><a href="bayes-forecast.html#cb58-8" aria-hidden="true" tabindex="-1"></a>myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
+<span id="cb58-9"><a href="bayes-forecast.html#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-10"><a href="bayes-forecast.html#cb58-10" aria-hidden="true" tabindex="-1"></a>sf1_Microsofct <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts,<span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="bayes-forecast.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_residuals</span>(sf1_Microsofct)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="bayes-forecast.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1_Microsofct,<span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-56-2.png" width="672" /></p>
+<p>Looking at data from Microsoft, the most correlated value with the present day value is 1 year behind. Both ACF and PACF are consistent with this. Since we only have around 20, observations, we will not have more fluctuation so our EV of PPE.</p>
 <p><strong>American Airlines Prediction</strong></p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="bayes-forecast.html#cb53-1" aria-hidden="true" tabindex="-1"></a>AAL <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
-<span id="cb53-2"><a href="bayes-forecast.html#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;AAL&#39;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-3"><a href="bayes-forecast.html#cb53-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-4"><a href="bayes-forecast.html#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
-<span id="cb53-5"><a href="bayes-forecast.html#cb53-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-6"><a href="bayes-forecast.html#cb53-6" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> AAL<span class="sc">$</span>EARNINGS_Scaled</span>
-<span id="cb53-7"><a href="bayes-forecast.html#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-8"><a href="bayes-forecast.html#cb53-8" aria-hidden="true" tabindex="-1"></a>myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
-<span id="cb53-9"><a href="bayes-forecast.html#cb53-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-10"><a href="bayes-forecast.html#cb53-10" aria-hidden="true" tabindex="-1"></a>sf1 <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts,<span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="bayes-forecast.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_residuals</span>(sf1)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="bayes-forecast.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1, <span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-51-2.png" width="672" /></p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="bayes-forecast.html#cb61-1" aria-hidden="true" tabindex="-1"></a>AAL <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="bayes-forecast.html#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COMPANY <span class="sc">==</span> <span class="st">&#39;AAL&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-3"><a href="bayes-forecast.html#cb61-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(EARNINGS_Scaled) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-4"><a href="bayes-forecast.html#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(EARNINGS_Scaled)</span>
+<span id="cb61-5"><a href="bayes-forecast.html#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-6"><a href="bayes-forecast.html#cb61-6" aria-hidden="true" tabindex="-1"></a>vector <span class="ot">&lt;-</span> AAL<span class="sc">$</span>EARNINGS_Scaled</span>
+<span id="cb61-7"><a href="bayes-forecast.html#cb61-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-8"><a href="bayes-forecast.html#cb61-8" aria-hidden="true" tabindex="-1"></a>myts <span class="ot">&lt;-</span> <span class="fu">ts</span>(vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1999</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">2021</span>), <span class="at">frequency=</span><span class="dv">1</span>)</span>
+<span id="cb61-9"><a href="bayes-forecast.html#cb61-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-10"><a href="bayes-forecast.html#cb61-10" aria-hidden="true" tabindex="-1"></a>sf1_aal <span class="ot">=</span> <span class="fu">stan_sarima</span>(<span class="at">ts =</span> myts,<span class="at">iter =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">5000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="bayes-forecast.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_residuals</span>(sf1_aal)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="bayes-forecast.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1_aal,<span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-58-2.png" width="672" /></p>
 <p>For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030 as predicting a cyclical company’s earnings could be a really difficult story. It did not show the similar pattern as Amazon.</p>
+<p>Looking at the ACF lab plot, the most noticiple increase is when we go from 1 difference (so looking at two year behind) to looking at 2 difference. This sugguests that particularly for American Airlines, the difference parameter should be 2.</p>
 
 </div>
 </div>
