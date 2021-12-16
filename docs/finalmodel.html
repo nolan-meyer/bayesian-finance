@@ -275,19 +275,17 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <h2><span class="header-section-number">5.2</span> Model Evaluation</h2>
 <div id="diagnostic-plots" class="section level3" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> Diagnostic Plots</h3>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="finalmodel.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(Diff_inter_slope_train)</span>
-<span id="cb68-2"><a href="finalmodel.html#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_dens_overlay</span>(Diff_inter_slope_train)</span></code></pre></div>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="finalmodel.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_slope_train)</span></code></pre></div>
-<p><img src="series_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
-<p>The model did an okay job modeling the true structure of the data. We see that several company earnings’ on the right seem to be causing the model some difficulties.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="finalmodel.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_slope_train)</span></code></pre></div>
+<p><img src="series_files/figure-html/unnamed-chunk-67-1.png" width="672" /></p>
+<p>The model did an okay job modeling the true structure of the data. We see that several company earnings’ on the right still seem to be causing the model some difficulties.</p>
 </div>
 <div id="metrics" class="section level3" number="5.2.2">
 <h3><span class="header-section-number">5.2.2</span> Metrics</h3>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="finalmodel.html#cb70-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="finalmodel.html#cb69-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_slope_metrics</span></code></pre></div>
 <pre><code>##         MAE  Within95  Within50  Within90
 ## 1 0.2781092 0.7931034 0.4935345 0.7262931</code></pre>
 <p>In our model with varying intercepts and slopes the average median posterior prediction is off by 0.28 billion. Furthermore, 79.3% of the earnings next year fall within the 95% prediction intervals and 49.4% are within the 50% prediction intervals.</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="finalmodel.html#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="finalmodel.html#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">conf.level =</span> .<span class="dv">80</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 13 × 5
 ##    term                          estimate std.error conf.low conf.high
 ##    &lt;chr&gt;                            &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
@@ -306,7 +304,7 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 ## 13 SectorUtilities               0.0597     0.0685   -0.0272    0.148</code></pre>
 <p>The impact of this year’s earnings is much stronger compared to the other variables (0.5467834739). It states that for one billion increase in earnings this year, the earnings for next year will increase by 0.5467 billions. Earnings next year also has much stronger impact than earnings 1 year ago.</p>
 <p>About the sector, the situation is also fairly similar as companies that are in Consumer Staples, Energy, or Financials will likely to have higher next year’s earnings than the others. However, in this model, the impact of the sector is smaller than the Diff_inter_train model. The most notable negative earnings impact also comes from real estate as according to the model, company that is in real estate will see the earnings next year smaller than the baseline earnings of 0.12 billions.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="finalmodel.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="finalmodel.html#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(Diff_inter_slope_train, <span class="at">effects =</span> <span class="st">&quot;ran_pars&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 4 × 3
 ##   term                                    group    estimate
 ##   &lt;chr&gt;                                   &lt;chr&gt;       &lt;dbl&gt;
@@ -314,16 +312,16 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 ## 2 sd_EARNINGS_Scaled.COMPANY              COMPANY     0.316
 ## 3 cor_(Intercept).EARNINGS_Scaled.COMPANY COMPANY    -0.743
 ## 4 sd_Observation.Residual                 Residual    0.353</code></pre>
-<p>The standard deviation <span class="math inline">\(\sigma_1\)</span> in the Earnings scaled coefficient (<span class="math inline">\(\beta_{1j}\)</span>) is likely to be around 0.31 billion per year. In the grand scheme of things, this number is quite high.</p>
+<p>The standard deviation <span class="math inline">\(\sigma_1\)</span> in the Earnings scaled coefficient (<span class="math inline">\(\beta_{1j}\)</span>) is likely to be around 0.31 billion per year. It refers that the standard deviation of the random slope for the Earnings coefficient is 0.31 billion dollars, which is a fairly high number.</p>
 <p>For <span class="math inline">\(\sigma_y\)</span>, an individual Company’s net earnings next year tend to deviate from their own mean model by 0.35 billion.</p>
 <p>There is a semi strong correlation between the Company Specific <span class="math inline">\(\beta_{0j}\)</span> and <span class="math inline">\(\beta_{1j}\)</span> parameters of -0.74. It seems that company’s with initial earnings will tend to experience a decrease in earnings compared to their previous years.</p>
 </div>
 </div>
 <div id="summary" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> Summary</h2>
-<p>Our model demonstrates that a company’s future earnings…</p>
-<p>Pros:</p>
-<p>Cons:</p>
+<p>Our model demonstrates that future earnings are somewhat dependent on the specific company and their current and previous earnings. It also demonstrates that there are tons of other external factors that make earnings volatile from year to year, adding uncertainty into the model. The average posterior prediction for future earnings is 0.28 billion off from the true earnings that year. Furthermore, 79.3% of the earnings next year fall within the 95% prediction intervals and 49.4% are within the 50% prediction intervals. This model was the best of the ones we explored during this project, however its accuracy suffered due to the differences in companies and volatile earnings.</p>
+<p>Pros: Our pro of our model is that we are able to have companies gain information from other companies. We can also model and edit parameter information regarding earnings between companies and within companies.</p>
+<p>Cons: In our model, we assume earnings are indpendent of earnings in the past. However, bayes forcast is able to model soley based off past patterns and trends.</p>
 
 </div>
 </div>

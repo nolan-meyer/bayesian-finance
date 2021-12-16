@@ -423,7 +423,9 @@ predict_model("AMZN", Diff_inter_slope_train)
 ```
 
 
-The predictions for the second model seem to be slightly better as more posterior predictive points are nearer to the actual values of earnings in "2020".
+The predictions for the second model (different intercepts and slopes) seem to be slightly better as more posterior predictive points are nearer to the actual values of earnings in "2020".
+
+Notice how for both models, predictions for Delta Air Lines are completely off from the actual data. However, in our model with different intercepts and slopes, more predictions are closer to the actual value, thus having the model mean being closer as well.
 
 
 ```{r, include=FALSE}

@@ -267,16 +267,11 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y & \sim N(\mu_{ij}, \sigma_y^2) \;\; \t
 
 ### Diagnostic Plots
 
-```{r, eval=FALSE}
-mcmc_trace(Diff_inter_slope_train)
-mcmc_dens_overlay(Diff_inter_slope_train)
-```
-
 ```{r}
 pp_check(Diff_inter_slope_train)
 ```
 
-The model did an okay job modeling the true structure of the data. We see that several company earnings' on the right seem to be causing the model some difficulties.  
+The model did an okay job modeling the true structure of the data. We see that several company earnings' on the right still seem to be causing the model some difficulties.  
 
 
 ### Metrics
@@ -306,7 +301,7 @@ About the sector, the situation is also fairly similar as companies that are in 
 tidy(Diff_inter_slope_train, effects = "ran_pars")
 ```
 
-The standard deviation $\sigma_1$ in the Earnings scaled coefficient ($\beta_{1j}$) is likely to be around 0.31 billion per year. In the grand scheme of things, this number is quite high. 
+The standard deviation $\sigma_1$ in the Earnings scaled coefficient ($\beta_{1j}$) is likely to be around 0.31 billion per year. It refers that the standard deviation of the random slope for the Earnings coefficient is 0.31 billion dollars, which is a fairly high number.  
 
 For $\sigma_y$, an individual Company's net earnings next year tend to deviate from their own mean model by 0.35 billion. 
 
@@ -315,9 +310,9 @@ There is a semi strong correlation between the Company Specific $\beta_{0j}$ and
 
 ## Summary
 
-Our model demonstrates that a company's future earnings...
+Our model demonstrates that future earnings are somewhat dependent on the specific company and their current and previous earnings. It also demonstrates that there are tons of other external factors that make earnings volatile from year to year, adding uncertainty into the model. The average posterior prediction for future earnings is 0.28 billion off from the true earnings that year. Furthermore, 79.3% of the earnings next year fall within the 95% prediction intervals and 49.4% are within the 50% prediction intervals. This model was the best of the ones we explored during this project, however its accuracy suffered due to the differences in companies and volatile earnings.
 
-Pros: 
+Pros: Our pro of our model is that we are able to have companies gain information from other companies. We can also model and edit parameter information regarding earnings between companies and within companies. 
 
-Cons:
+Cons: In our model, we assume earnings are indpendent of earnings in the past. However, bayes forcast is able to model soley based off past patterns and trends. 
 
