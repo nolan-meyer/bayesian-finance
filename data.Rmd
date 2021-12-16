@@ -62,7 +62,7 @@ library(ggplot2)
 ```
 
 ```{r, echo=FALSE}
-#Loading Datasets
+#Loading Data sets
 data <- read.csv("FINALDATASET.csv")
 rand_data <- read.csv("RandomCompnay.csv") #random subset of "data"
 ```

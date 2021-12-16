@@ -332,7 +332,7 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="hierarchical-modeling.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pp_check</span>(Diff_inter_slope_train)</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
 <p>Several company earnings’ on the right seem to be causing model fitness difficulties. Both models run into this problem, however the second model is able to capture more of the outliers on the right.</p>
-<p>Prior to removing the extreme outliers in our dataset, the posterior predictive check for the models were worse as it left majority of the outliers uncovered. After filtering out for outliers, we evidently still have problems with both models.</p>
+<p>Prior to removing the extreme outliers in our data set, the posterior predictive check for the models were worse as it left majority of the outliers uncovered. After filtering out for outliers, we evidently still have problems with both models.</p>
 <p>Next we will examine the predictive accuracy of the models.</p>
 </div>
 <div id="how-accurate-are-the-models" class="section level3" number="3.4.2">
@@ -360,7 +360,7 @@ Y_{ij} | \beta_{0j}, \beta_{1j}, \sigma_y &amp; \sim N(\mu_{ij}, \sigma_y^2) \;\
 <p><img src="series_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>The predictions for the second model seem to be slightly better as more posterior predictive points are nearer to the actual values of earnings in “2020”.</p>
 <p><strong>Evaluating Metrics</strong></p>
-<p>For the prediction metrics, using the training dataset, we calculated 20,000 values for each individual company for their earnings next year (the last year we have data on them) using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.</p>
+<p>For the prediction metrics, using the training data set, we calculated 20,000 values for each individual company for their earnings next year (the last year we have data on them) using the hierarchical models. We then take the median value of the 20,000 for each company and calculate the mean distance from the median to the actual earnings observed for that year. We also computed the 95% and 50% prediction intervals by calculating the percentage of 20,000 predicted values are within the 2.5th and 97.5th percentile and 25 to 75th percentile respectively.</p>
 <p>Different Intercepts Model:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="hierarchical-modeling.html#cb29-1" aria-hidden="true" tabindex="-1"></a>Diff_inter_metrics</span></code></pre></div>
 <pre><code>##         MAE  Within95  Within50  Within90

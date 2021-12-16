@@ -243,7 +243,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">4.2</span> Modeling</h2>
 <div id="accuracy" class="section level3" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> Accuracy</h3>
-<p>In order to predict next year’s earnings for every company, as it acts like a time series model, we need to have companies that have at least 3 years of earnings. We first eliminate the companies that have only 2 years of earnings in this dataset, then we will create a function to find the earnings for the next year of these companies.</p>
+<p>In order to predict next year’s earnings for every company, as it acts like a time series model, we need to have companies that have at least 3 years of earnings. We first eliminate the companies that have only 2 years of earnings in this data set, then we will create a function to find the earnings for the next year of these companies.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="bayes-forecast.html#cb46-1" aria-hidden="true" tabindex="-1"></a>COMPANY_Names <span class="ot">&lt;-</span> data_elimatedO<span class="sc">$</span>COMPANY</span>
 <span id="cb46-2"><a href="bayes-forecast.html#cb46-2" aria-hidden="true" tabindex="-1"></a>unique_COMPANY <span class="ot">&lt;-</span> <span class="fu">unique</span>(COMPANY_Names)</span>
 <span id="cb46-3"><a href="bayes-forecast.html#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -291,7 +291,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb48-29"><a href="bayes-forecast.html#cb48-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb48-30"><a href="bayes-forecast.html#cb48-30" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(unique_COMPANY_2[<span class="dv">1</span><span class="sc">:</span> total_number_of_COMPANY_2], point, low, high)</span>
 <span id="cb48-31"><a href="bayes-forecast.html#cb48-31" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
-<p>After having the dataset, we then combine the function with the actual dataset in order to see the accuracy rate for these models in which it predicts the earnings next year for these companies.</p>
+<p>After having the data set, we then combine the function with the actual data set in order to see the accuracy rate for these models in which it predicts the earnings next year for these companies.</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="bayes-forecast.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(df) </span>
 <span id="cb49-2"><a href="bayes-forecast.html#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-3"><a href="bayes-forecast.html#cb49-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
@@ -317,7 +317,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb49-23"><a href="bayes-forecast.html#cb49-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-24"><a href="bayes-forecast.html#cb49-24" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(bayesian_forecast_earnigns, <span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="bayes-forecast.html#cb50-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;bayesian_forecast_earnigns.csv&quot;</span>)</span></code></pre></div>
-<p>After combining the two datasets, we then evaluate the accuracy rate for the Bayesian forecast model:</p>
+<p>After combining the two data sets, we then evaluate the accuracy rate for the Bayesian forecast model:</p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="bayes-forecast.html#cb51-1" aria-hidden="true" tabindex="-1"></a>bayesian_forecast_earnigns <span class="ot">&lt;-</span> bayesian_forecast_earnigns <span class="sc">%&gt;%</span> </span>
 <span id="cb51-2"><a href="bayes-forecast.html#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">median_dist =</span> <span class="fu">abs</span>(point <span class="sc">-</span> Earnings_next_year_Scaled)) <span class="sc">%&gt;%</span> </span>
 <span id="cb51-3"><a href="bayes-forecast.html#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Is_90 =</span> (Earnings_next_year_Scaled <span class="sc">&gt;=</span> low) <span class="sc">&amp;</span> (Earnings_next_year_Scaled <span class="sc">&lt;=</span> high))</span>
@@ -383,7 +383,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="bayes-forecast.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">forecast</span>(<span class="at">object =</span> sf1_aal,<span class="at">h =</span> <span class="dv">12</span>))</span></code></pre></div>
 <p><img src="series_files/figure-html/unnamed-chunk-58-2.png" width="672" /></p>
 <p>For American Airlines, we see a different story. As we can see from the graph, as airlines industry is an extremely cyclical field, the earnings fluctuate a lot. We could see that they fluctuate a lot during the previous years. With that in mind, the model predicts that American Airlines will not improve the much during the following years from 2021 to 2030 as predicting a cyclical company’s earnings could be a really difficult story. It did not show the similar pattern as Amazon.</p>
-<p>Looking at the ACF lab plot, the most noticiple increase is when we go from 1 difference (so looking at two year behind) to looking at 2 difference. This sugguests that particularly for American Airlines, the difference parameter should be 2.</p>
+<p>Looking at the ACF lab plot, the most noticeable increase is when we go from 1 difference (so looking at two year behind) to looking at 2 difference. This suggests that particularly for American Airlines, the difference parameter should be 2.</p>
 
 </div>
 </div>
