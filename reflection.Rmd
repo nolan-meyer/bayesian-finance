@@ -27,7 +27,7 @@ Modeling Multiple Times Series with Applications - USGS. https://rmgsc.cr.usgs.g
 
 ## Code Appendix
 
-To reproduce these results, the complete files and data are provided below:
+To reproduce these results, the complete files and data sets are provided below:
 
 [Google Drive Link](https://drive.google.com/drive/folders/1O367Giuc7U2HH_IIk2R1i5cnu80ezRcK?usp=sharing)
 
