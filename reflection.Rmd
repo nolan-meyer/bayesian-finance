@@ -29,6 +29,5 @@ Modeling Multiple Times Series with Applications - USGS. https://rmgsc.cr.usgs.g
 
 To reproduce these results, the complete files and data are provided below:
 
-```{r, eval=FALSE}
-xfun::embed_files(c('data.Rmd', 'modeling.Rmd', 'finalmodel.Rmd', 'FINALDATASET.csv', 'RandomCompnay.csv', 'bayesian_forecast_earnigns.csv', 'Diff_Inter_train_nick.rds', 'Diff_inter_slope_train_nick.rds'))
-```
+[Google Drive Link](https://drive.google.com/drive/folders/1O367Giuc7U2HH_IIk2R1i5cnu80ezRcK?usp=sharing)
+
