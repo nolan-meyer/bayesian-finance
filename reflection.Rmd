@@ -12,9 +12,12 @@ For our project, we want to thank Dr. Alicia Johnson for teaching us a lot of us
 
 “4.1 Seasonal Arima Models: Stat 510.” PennState: Statistics Online Courses, https://online.stat.psu.edu/stat510/lesson/4/4.1. 
 
-“Bayesian Time Series Modeling with Stan [R Package Bayesforecast Version 1.0.1].” The Comprehensive R Archive Network, Comprehensive R Archive Network (CRAN), 17 June 2021, https://cran.r-project.org/web/packages/bayesforecast/index.html. 
+“Bayesian Time Series Modeling with Stan [R Package Bayesforecast Version 1.0.1].” The Comprehensive R Archive Network, Comprehensive R Archive Network (CRAN), 17 June 2021, https://cran.r-project.org/web/packages/bayesforecast/index.html.
+
 
 “Forecasting: Principles and Practice (2nd Ed).” 8.9 Seasonal ARIMA Models, https://otexts.com/fpp2/seasonal-arima.html. 
+
+Modeling Multiple Times Series with Applications - USGS. https://rmgsc.cr.usgs.gov/outgoing/threshold_articles/Tiao_Box1981.pdf. 
 
 “Modeltime Integration.” Bayesmodels, https://albertoalmuinha.github.io/bayesmodels/articles/modeltime-integration.html. 
 
